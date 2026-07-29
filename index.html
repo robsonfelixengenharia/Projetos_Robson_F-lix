@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
 
 <title>Félix Engenharia | Projeto 3D</title>
+
 
 <style>
 
@@ -14,18 +21,18 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
     background: #e8e8e8;
-    touch-action: none;
 }
 
 #viewer {
-    position: absolute;
+    position: fixed;
     inset: 0;
 }
 
@@ -33,12 +40,15 @@ canvas {
     display: block;
 }
 
-/* =========================================================
+
+/* =====================================================
    BARRA SUPERIOR
-========================================================= */
+===================================================== */
 
 #topbar {
-    position: absolute;
+
+    position: fixed;
+
     top: 0;
     left: 0;
     right: 0;
@@ -49,54 +59,68 @@ canvas {
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 22px;
+    padding: 0 20px;
 
-    background: rgba(18,18,18,0.92);
+    background: rgba(18,18,18,0.94);
+
     color: white;
 
-    z-index: 20;
+    z-index: 1000;
 }
+
 
 #empresa {
-    font-size: 20px;
+
+    font-size: 19px;
+
     font-weight: bold;
+
     letter-spacing: 1px;
+
+    white-space: nowrap;
 }
+
 
 #buttons {
+
     display: flex;
-    gap: 8px;
+
+    gap: 7px;
 }
+
 
 button {
-    border: 0;
+
+    border: none;
+
     border-radius: 20px;
 
-    padding: 10px 16px;
+    padding: 9px 14px;
 
     background: #333;
+
     color: white;
 
-    cursor: pointer;
-
     font-weight: bold;
+
+    cursor: pointer;
 }
 
-button:hover {
-    background: #555;
-}
 
 button.active {
+
     background: #16853c;
 }
 
 
-/* =========================================================
+
+/* =====================================================
    CARREGAMENTO
-========================================================= */
+===================================================== */
 
 #loading {
-    position: absolute;
+
+    position: fixed;
 
     left: 50%;
     top: 50%;
@@ -104,171 +128,195 @@ button.active {
     transform: translate(-50%, -50%);
 
     background: rgba(20,20,20,0.92);
+
     color: white;
 
     padding: 20px 30px;
 
-    border-radius: 14px;
+    border-radius: 15px;
 
-    z-index: 50;
+    z-index: 2000;
 
     text-align: center;
 }
 
+
 #progress {
+
     margin-top: 10px;
 
-    font-size: 13px;
-
     color: #ccc;
+
+    font-size: 13px;
 }
 
 
-/* =========================================================
-   AJUDA
-========================================================= */
 
-#walkHelp {
-    position: absolute;
+/* =====================================================
+   INSTRUÇÕES
+===================================================== */
+
+#help {
+
+    position: fixed;
 
     left: 50%;
-    bottom: 22px;
+
+    bottom: 20px;
 
     transform: translateX(-50%);
-
-    background: rgba(20,20,20,0.82);
-    color: white;
 
     padding: 10px 18px;
 
     border-radius: 20px;
 
+    background: rgba(15,15,15,0.75);
+
+    color: white;
+
     font-size: 12px;
 
-    z-index: 15;
+    z-index: 800;
+
+    pointer-events: none;
 
     display: none;
 
-    pointer-events: none;
+    white-space: nowrap;
 }
 
 
-/* =========================================================
-   MIRA CENTRAL
-========================================================= */
+
+/* =====================================================
+   MIRA
+===================================================== */
 
 #crosshair {
-    position: absolute;
+
+    position: fixed;
 
     left: 50%;
+
     top: 50%;
 
     width: 8px;
+
     height: 8px;
 
     transform: translate(-50%, -50%);
 
     border: 2px solid white;
+
     border-radius: 50%;
 
-    z-index: 12;
-
-    display: none;
+    z-index: 700;
 
     pointer-events: none;
+
+    display: none;
 }
 
 
-/* =========================================================
-   CONTROLES TOUCH
-========================================================= */
 
-#mobileControls {
-    display: none;
+/* =====================================================
+   CONTROLES MOBILE
+===================================================== */
 
-    position: absolute;
+#mobileWalk {
+
+    position: fixed;
 
     inset: 0;
 
-    z-index: 11;
+    z-index: 500;
+
+    display: none;
 
     pointer-events: none;
 }
 
 
-/* =========================================================
-   ÁREA DO JOYSTICK
-========================================================= */
 
-#joystickZone {
+/* =====================================================
+   JOYSTICK
+===================================================== */
+
+#joystickArea {
+
     position: absolute;
 
-    left: 18px;
+    width: 160px;
+
+    height: 160px;
+
+    left: 15px;
+
     bottom: 25px;
 
-    width: 150px;
-    height: 150px;
-
     pointer-events: auto;
 
     touch-action: none;
 }
 
-
-/* círculo externo */
 
 #joystickBase {
+
     position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
 
     width: 120px;
+
     height: 120px;
 
+    left: 20px;
+
+    top: 20px;
+
     border-radius: 50%;
 
-    background: rgba(20,20,20,0.35);
+    background: rgba(20,20,20,0.42);
 
-    border: 2px solid rgba(255,255,255,0.50);
+    border: 2px solid rgba(255,255,255,0.65);
 }
 
 
-/* círculo interno */
+#joystickKnob {
 
-#joystickStick {
     position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
 
     width: 52px;
+
     height: 52px;
+
+    left: 54px;
+
+    top: 54px;
 
     border-radius: 50%;
 
-    background: rgba(255,255,255,0.75);
+    background: rgba(255,255,255,0.88);
 
-    border: 2px solid rgba(255,255,255,0.90);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+    pointer-events: none;
 }
 
 
-/* =========================================================
-   ÁREA PARA OLHAR
-========================================================= */
 
-#lookZone {
+/* =====================================================
+   ÁREA DE VISÃO MOBILE
+===================================================== */
+
+#touchLook {
+
     position: absolute;
 
-    right: 0;
     top: 64px;
 
-    width: 55%;
+    right: 0;
+
     bottom: 0;
+
+    width: 60%;
 
     pointer-events: auto;
 
@@ -276,77 +324,144 @@ button.active {
 }
 
 
-/* =========================================================
-   BOTÕES SUBIR / DESCER
-========================================================= */
 
-#verticalControls {
+/* =====================================================
+   SUBIR / DESCER
+===================================================== */
+
+#verticalButtons {
+
     position: absolute;
 
-    right: 20px;
-    bottom: 30px;
+    right: 18px;
+
+    bottom: 25px;
 
     display: flex;
+
     flex-direction: column;
 
-    gap: 12px;
+    gap: 10px;
 
     pointer-events: auto;
+
+    z-index: 520;
 }
 
-.verticalBtn {
-    width: 52px;
-    height: 52px;
+
+.verticalButton {
+
+    width: 50px;
+
+    height: 50px;
 
     padding: 0;
 
     border-radius: 50%;
 
-    font-size: 20px;
+    background: rgba(20,20,20,0.62);
 
-    background: rgba(20,20,20,0.60);
+    border: 1px solid rgba(255,255,255,0.65);
 
-    border: 1px solid rgba(255,255,255,0.50);
+    font-size: 18px;
+
+    touch-action: none;
 }
 
 
-/* =========================================================
-   MOBILE
-========================================================= */
+
+/* =====================================================
+   CELULAR
+===================================================== */
 
 @media (max-width: 700px) {
 
+
     #topbar {
+
         height: 58px;
 
-        padding: 0 8px;
+        padding: 0 6px;
     }
+
 
     #empresa {
-        font-size: 12px;
+
+        font-size: 11px;
+
+        max-width: 80px;
+
+        line-height: 12px;
+
+        white-space: normal;
     }
+
 
     #buttons {
-        gap: 4px;
+
+        gap: 3px;
     }
+
 
     button {
-        padding: 8px 8px;
 
-        font-size: 10px;
+        padding: 8px 7px;
+
+        font-size: 9px;
     }
 
-    #walkHelp {
-        top: 70px;
+
+    #touchLook {
+
+        top: 58px;
+    }
+
+
+    #help {
+
+        top: 68px;
+
         bottom: auto;
 
         font-size: 10px;
 
-        white-space: nowrap;
+        padding: 7px 10px;
     }
 
-    #lookZone {
-        top: 58px;
+
+    #joystickArea {
+
+        width: 145px;
+
+        height: 145px;
+
+        left: 8px;
+
+        bottom: 15px;
+    }
+
+
+    #joystickBase {
+
+        width: 110px;
+
+        height: 110px;
+
+        left: 17.5px;
+
+        top: 17.5px;
+    }
+
+
+    #joystickKnob {
+
+        width: 48px;
+
+        height: 48px;
+
+        left: 48.5px;
+
+        top: 48.5px;
     }
 
 }
@@ -362,20 +477,17 @@ button.active {
 <div id="viewer"></div>
 
 
-<!-- =====================================================
-     BARRA SUPERIOR
-===================================================== -->
-
 <div id="topbar">
 
     <div id="empresa">
         FÉLIX ENGENHARIA
     </div>
 
+
     <div id="buttons">
 
         <button id="orbitBtn" class="active">
-            🏠 Vista geral
+            🏠 Vista
         </button>
 
         <button id="walkBtn">
@@ -387,7 +499,7 @@ button.active {
         </button>
 
         <button id="fullscreenBtn">
-            ⛶ Tela cheia
+            ⛶
         </button>
 
     </div>
@@ -395,9 +507,6 @@ button.active {
 </div>
 
 
-<!-- =====================================================
-     CARREGAMENTO
-===================================================== -->
 
 <div id="loading">
 
@@ -410,55 +519,49 @@ button.active {
 </div>
 
 
-<!-- =====================================================
-     AJUDA
-===================================================== -->
 
-<div id="walkHelp"></div>
-
+<div id="help"></div>
 
 <div id="crosshair"></div>
 
 
-<!-- =====================================================
-     CONTROLES DO CELULAR
-===================================================== -->
 
-<div id="mobileControls">
+<!-- ===================================================
+     CONTROLES EXCLUSIVOS DO CELULAR
+=================================================== -->
+
+<div id="mobileWalk">
 
 
-    <!-- JOYSTICK -->
+    <div id="joystickArea">
 
-    <div id="joystickZone">
+        <div id="joystickBase"></div>
 
-        <div id="joystickBase">
-
-            <div id="joystickStick"></div>
-
-        </div>
+        <div id="joystickKnob"></div>
 
     </div>
 
 
-    <!-- ÁREA PARA GIRAR A CÂMERA -->
-
-    <div id="lookZone"></div>
+    <div id="touchLook"></div>
 
 
-    <!-- SUBIR / DESCER -->
-
-    <div id="verticalControls">
+    <div id="verticalButtons">
 
         <button
-            id="upBtn"
-            class="verticalBtn">
+        id="upButton"
+        class="verticalButton">
+
             ▲
+
         </button>
 
+
         <button
-            id="downBtn"
-            class="verticalBtn">
+        id="downButton"
+        class="verticalButton">
+
             ▼
+
         </button>
 
     </div>
@@ -468,9 +571,9 @@ button.active {
 
 
 
-<!-- =====================================================
+<!-- ===================================================
      THREE.JS
-===================================================== -->
+=================================================== -->
 
 <script type="importmap">
 
@@ -482,7 +585,6 @@ button.active {
 
         "three/addons/":
         "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-
     }
 }
 
@@ -515,21 +617,25 @@ from 'three/addons/loaders/GLTFLoader.js';
 
 
 
-/* =========================================================
-   DETECTA CELULAR / TOUCH
-========================================================= */
+/* =====================================================
+   DETECÇÃO MOBILE
+===================================================== */
 
-const isTouchDevice =
+const isMobile =
 
-    ('ontouchstart' in window) ||
+    window.matchMedia(
+        '(pointer: coarse)'
+    ).matches
+
+    ||
 
     navigator.maxTouchPoints > 0;
 
 
 
-/* =========================================================
+/* =====================================================
    CENA
-========================================================= */
+===================================================== */
 
 const scene =
     new THREE.Scene();
@@ -542,11 +648,9 @@ scene.background =
 
 
 
-/* =========================================================
+/* =====================================================
    CÂMERA
-
-   65° = perspectiva grande angular
-========================================================= */
+===================================================== */
 
 const camera =
     new THREE.PerspectiveCamera(
@@ -559,28 +663,31 @@ const camera =
         0.05,
 
         10000
-
     );
 
 
 
-/* =========================================================
-   RENDER
-========================================================= */
+/* =====================================================
+   RENDERER
+===================================================== */
 
 const renderer =
     new THREE.WebGLRenderer({
 
-        antialias: true
+        antialias: true,
 
+        powerPreference:
+        'high-performance'
     });
 
 
 renderer.setPixelRatio(
 
     Math.min(
+
         window.devicePixelRatio,
-        2
+
+        1.75
     )
 
 );
@@ -591,7 +698,6 @@ renderer.setSize(
     window.innerWidth,
 
     window.innerHeight
-
 );
 
 
@@ -599,23 +705,21 @@ renderer.outputColorSpace =
     THREE.SRGBColorSpace;
 
 
-renderer.shadowMap.enabled =
-    true;
-
-
 document
-    .getElementById('viewer')
-    .appendChild(
-        renderer.domElement
-    );
+.getElementById('viewer')
+.appendChild(
+
+    renderer.domElement
+
+);
 
 
 
-/* =========================================================
-   ILUMINAÇÃO
-========================================================= */
+/* =====================================================
+   LUZ
+===================================================== */
 
-const ambientLight =
+const hemisphere =
     new THREE.HemisphereLight(
 
         0xffffff,
@@ -623,13 +727,13 @@ const ambientLight =
         0x777777,
 
         2.5
-
     );
 
 
 scene.add(
-    ambientLight
+    hemisphere
 );
+
 
 
 const sun =
@@ -638,7 +742,6 @@ const sun =
         0xffffff,
 
         3
-
     );
 
 
@@ -649,7 +752,6 @@ sun.position.set(
     100,
 
     50
-
 );
 
 
@@ -659,9 +761,9 @@ scene.add(
 
 
 
-/* =========================================================
+/* =====================================================
    ORBIT CONTROLS
-========================================================= */
+===================================================== */
 
 const orbit =
     new OrbitControls(
@@ -669,7 +771,6 @@ const orbit =
         camera,
 
         renderer.domElement
-
     );
 
 
@@ -682,7 +783,7 @@ orbit.dampingFactor =
 
 
 orbit.zoomSpeed =
-    0.50;
+    0.5;
 
 
 orbit.enablePan =
@@ -693,43 +794,41 @@ orbit.panSpeed =
     0.7;
 
 
-orbit.minDistance =
-    1;
+
+/* =====================================================
+   POINTER LOCK
+
+   SÓ SERÁ UTILIZADO NO COMPUTADOR
+===================================================== */
+
+let pointerControls = null;
 
 
-orbit.maxDistance =
-    10000;
+if(!isMobile) {
+
+
+    pointerControls =
+        new PointerLockControls(
+
+            camera,
+
+            renderer.domElement
+        );
+
+
+    pointerControls.pointerSpeed =
+        0.8;
+
+}
 
 
 
-/* =========================================================
-   WALK - COMPUTADOR
-========================================================= */
-
-const walk =
-    new PointerLockControls(
-
-        camera,
-
-        renderer.domElement
-
-    );
-
-
-walk.pointerSpeed =
-    0.8;
-
-
-
-/* =========================================================
-   ESTADO
-========================================================= */
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
 
 let mode =
     'orbit';
-
-
-let model;
 
 
 let modelCenter =
@@ -741,153 +840,9 @@ let modelSize =
 
 
 
-/* =========================================================
-   TECLADO
-========================================================= */
-
-const keys = {
-
-    forward: false,
-
-    backward: false,
-
-    left: false,
-
-    right: false,
-
-    up: false,
-
-    down: false
-
-};
-
-
-
-document.addEventListener(
-
-    'keydown',
-
-    event => {
-
-        switch(event.code) {
-
-            case 'KeyW':
-            case 'ArrowUp':
-
-                keys.forward = true;
-
-                break;
-
-
-            case 'KeyS':
-            case 'ArrowDown':
-
-                keys.backward = true;
-
-                break;
-
-
-            case 'KeyA':
-            case 'ArrowLeft':
-
-                keys.left = true;
-
-                break;
-
-
-            case 'KeyD':
-            case 'ArrowRight':
-
-                keys.right = true;
-
-                break;
-
-
-            case 'KeyE':
-
-                keys.up = true;
-
-                break;
-
-
-            case 'KeyQ':
-
-                keys.down = true;
-
-                break;
-
-        }
-
-    }
-
-);
-
-
-
-document.addEventListener(
-
-    'keyup',
-
-    event => {
-
-        switch(event.code) {
-
-            case 'KeyW':
-            case 'ArrowUp':
-
-                keys.forward = false;
-
-                break;
-
-
-            case 'KeyS':
-            case 'ArrowDown':
-
-                keys.backward = false;
-
-                break;
-
-
-            case 'KeyA':
-            case 'ArrowLeft':
-
-                keys.left = false;
-
-                break;
-
-
-            case 'KeyD':
-            case 'ArrowRight':
-
-                keys.right = false;
-
-                break;
-
-
-            case 'KeyE':
-
-                keys.up = false;
-
-                break;
-
-
-            case 'KeyQ':
-
-                keys.down = false;
-
-                break;
-
-        }
-
-    }
-
-);
-
-
-
-/* =========================================================
-   CARREGAMENTO DO GLB
-========================================================= */
+/* =====================================================
+   CARREGAR GLB
+===================================================== */
 
 const loader =
     new GLTFLoader();
@@ -895,18 +850,20 @@ const loader =
 
 loader.load(
 
+
     /*
-       Se substituir o GLB futuramente,
-       altere v=20 para v=21, v=22 etc.
+       Aumente o número caso substitua
+       o arquivo GLB futuramente.
     */
 
-    'modelo.glb?v=20',
+    'modelo.glb?v=30',
 
 
-    function(gltf) {
+
+    gltf => {
 
 
-        model =
+        const model =
             gltf.scene;
 
 
@@ -916,25 +873,21 @@ loader.load(
 
 
 
-        /* =================================================
-           TAMANHO DO PROJETO
-        ================================================= */
+        /* =============================================
+           DIMENSÕES
+        ============================================= */
 
         const box =
-
             new THREE.Box3()
-
             .setFromObject(
                 model
             );
 
 
         const size =
-
             box.getSize(
 
                 new THREE.Vector3()
-
             );
 
 
@@ -944,7 +897,6 @@ loader.load(
 
 
         modelSize =
-
             Math.max(
 
                 size.x,
@@ -952,18 +904,15 @@ loader.load(
                 size.y,
 
                 size.z
-
             );
 
 
 
-        /* =================================================
+        /* =============================================
            LIMITE DE ZOOM
 
-           EXATAMENTE COMO VOCÊ PEDIU:
-
-           10% do tamanho do modelo.
-        ================================================= */
+           10%, COMO VOCÊ PEDIU
+        ============================================= */
 
         orbit.minDistance =
             modelSize * 0.10;
@@ -974,69 +923,51 @@ loader.load(
 
 
 
-        /* =================================================
-           POSIÇÃO INICIAL
-        ================================================= */
+        /* =============================================
+           VISTA INICIAL
+        ============================================= */
 
-        setHomeView();
+        setHome();
 
 
-
-        /* =================================================
-           FINALIZA CARREGAMENTO
-        ================================================= */
 
         document
-            .getElementById(
-                'loading'
-            )
-            .style.display =
+        .getElementById('loading')
+        .style.display =
             'none';
 
     },
 
 
-    /* =====================================================
-       PROGRESSO
-    ===================================================== */
 
-    function(xhr) {
+    xhr => {
 
 
         if(xhr.total) {
 
 
-            const percentage =
-
+            const value =
                 Math.round(
 
                     xhr.loaded /
-
                     xhr.total *
-
                     100
-
                 );
 
 
             document
-                .getElementById(
-                    'progress'
-                )
-                .innerText =
+            .getElementById('progress')
+            .textContent =
 
-                percentage + '%';
+                value + '%';
 
         }
 
     },
 
 
-    /* =====================================================
-       ERRO
-    ===================================================== */
 
-    function(error) {
+    error => {
 
 
         console.error(
@@ -1045,12 +976,10 @@ loader.load(
 
 
         document
-            .getElementById(
-                'loading'
-            )
-            .innerHTML =
+        .getElementById('loading')
+        .innerHTML =
 
-            'Erro ao carregar o modelo 3D';
+            'Erro ao carregar o projeto 3D';
 
     }
 
@@ -1058,11 +987,11 @@ loader.load(
 
 
 
-/* =========================================================
+/* =====================================================
    VISTA INICIAL
-========================================================= */
+===================================================== */
 
-function setHomeView() {
+function setHome() {
 
 
     camera.position.set(
@@ -1077,7 +1006,6 @@ function setHomeView() {
 
         modelCenter.z +
         modelSize * 0.75
-
     );
 
 
@@ -1092,9 +1020,9 @@ function setHomeView() {
 
 
 
-/* =========================================================
-   ELEMENTOS
-========================================================= */
+/* =====================================================
+   ELEMENTOS HTML
+===================================================== */
 
 const orbitBtn =
     document.getElementById(
@@ -1114,9 +1042,9 @@ const homeBtn =
     );
 
 
-const walkHelp =
+const help =
     document.getElementById(
-        'walkHelp'
+        'help'
     );
 
 
@@ -1126,52 +1054,46 @@ const crosshair =
     );
 
 
-const mobileControls =
+const mobileWalk =
     document.getElementById(
-        'mobileControls'
+        'mobileWalk'
     );
 
 
 
-/* =========================================================
-   MODO VISTA GERAL
-========================================================= */
+/* =====================================================
+   VISTA GERAL
+===================================================== */
 
-function enableOrbitMode() {
+function activateOrbit() {
 
 
     mode =
         'orbit';
 
 
-    if(
-        walk.isLocked
-    ) {
-
-        walk.unlock();
-
-    }
-
-
     orbit.enabled =
         true;
 
 
-    orbitBtn
-        .classList
-        .add(
-            'active'
-        );
+
+    if(
+        pointerControls &&
+        pointerControls.isLocked
+    ) {
 
 
-    walkBtn
-        .classList
-        .remove(
-            'active'
-        );
+        pointerControls.unlock();
+
+    }
 
 
-    walkHelp.style.display =
+
+    mobileWalk.style.display =
+        'none';
+
+
+    help.style.display =
         'none';
 
 
@@ -1179,8 +1101,19 @@ function enableOrbitMode() {
         'none';
 
 
-    mobileControls.style.display =
-        'none';
+
+    orbitBtn
+    .classList
+    .add(
+        'active'
+    );
+
+
+    walkBtn
+    .classList
+    .remove(
+        'active'
+    );
 
 }
 
@@ -1190,17 +1123,17 @@ orbitBtn.addEventListener(
 
     'click',
 
-    enableOrbitMode
+    activateOrbit
 
 );
 
 
 
-/* =========================================================
-   MODO CAMINHAR
-========================================================= */
+/* =====================================================
+   CAMINHAR
+===================================================== */
 
-function enableWalkMode() {
+function activateWalk() {
 
 
     mode =
@@ -1211,18 +1144,19 @@ function enableWalkMode() {
         false;
 
 
-    walkBtn
-        .classList
-        .add(
-            'active'
-        );
-
 
     orbitBtn
-        .classList
-        .remove(
-            'active'
-        );
+    .classList
+    .remove(
+        'active'
+    );
+
+
+    walkBtn
+    .classList
+    .add(
+        'active'
+    );
 
 
     crosshair.style.display =
@@ -1230,51 +1164,55 @@ function enableWalkMode() {
 
 
 
-    /* =====================================================
+    /* =============================================
        CELULAR
-    ===================================================== */
+    ============================================= */
 
-    if(
-        isTouchDevice
-    ) {
+    if(isMobile) {
 
 
-        mobileControls.style.display =
+        /*
+           Nenhum PointerLock é chamado aqui.
+        */
+
+
+        mobileWalk.style.display =
             'block';
 
 
-        walkHelp.innerHTML =
+        help.textContent =
 
             'Joystick = andar • Arraste o lado direito = olhar';
 
 
-        walkHelp.style.display =
+        help.style.display =
             'block';
 
     }
 
 
-    /* =====================================================
+
+    /* =============================================
        COMPUTADOR
-    ===================================================== */
+    ============================================= */
 
     else {
 
 
-        mobileControls.style.display =
+        mobileWalk.style.display =
             'none';
 
 
-        walkHelp.innerHTML =
+        help.textContent =
 
-            'W A S D = caminhar • Mouse = olhar • E/Q = subir/descer • ESC = liberar mouse';
+            'WASD = andar • Mouse = olhar • E/Q = subir/descer • ESC = sair';
 
 
-        walkHelp.style.display =
+        help.style.display =
             'block';
 
 
-        walk.lock();
+        pointerControls.lock();
 
     }
 
@@ -1286,48 +1224,15 @@ walkBtn.addEventListener(
 
     'click',
 
-    enableWalkMode
+    activateWalk
 
 );
 
 
 
-/* =========================================================
-   ESC - COMPUTADOR
-========================================================= */
-
-walk.addEventListener(
-
-    'unlock',
-
-    () => {
-
-
-        if(
-            mode === 'walk' &&
-            !isTouchDevice
-        ) {
-
-
-            crosshair.style.display =
-                'none';
-
-
-            walkHelp.innerHTML =
-
-                'Clique novamente em CAMINHAR para continuar';
-
-        }
-
-    }
-
-);
-
-
-
-/* =========================================================
-   BOTÃO INÍCIO
-========================================================= */
+/* =====================================================
+   INÍCIO
+===================================================== */
 
 homeBtn.addEventListener(
 
@@ -1336,10 +1241,10 @@ homeBtn.addEventListener(
     () => {
 
 
-        enableOrbitMode();
+        activateOrbit();
 
 
-        setHomeView();
+        setHome();
 
     }
 
@@ -1347,19 +1252,20 @@ homeBtn.addEventListener(
 
 
 
-/* =========================================================
+/* =====================================================
    TELA CHEIA
-========================================================= */
+===================================================== */
 
 document
-    .getElementById(
-        'fullscreenBtn'
-    )
-    .addEventListener(
+.getElementById('fullscreenBtn')
+.addEventListener(
 
-        'click',
+    'click',
 
-        () => {
+    async () => {
+
+
+        try {
 
 
             if(
@@ -1367,154 +1273,29 @@ document
             ) {
 
 
-                document
-                    .documentElement
-                    .requestFullscreen()
-                    .catch(() => {});
-
+                await document
+                .documentElement
+                .requestFullscreen();
 
             }
+
 
             else {
 
 
-                document
-                    .exitFullscreen()
-                    .catch(() => {});
+                await document
+                .exitFullscreen();
 
             }
 
         }
 
-    );
 
+        catch(e) {
 
-
-/* =========================================================
-   JOYSTICK CELULAR
-========================================================= */
-
-const joystickZone =
-    document.getElementById(
-        'joystickZone'
-    );
-
-
-const joystickStick =
-    document.getElementById(
-        'joystickStick'
-    );
-
-
-let joystickPointer =
-    null;
-
-
-let joystickX =
-    0;
-
-
-let joystickY =
-    0;
-
-
-const joystickRadius =
-    45;
-
-
-
-function resetJoystick() {
-
-
-    joystickX =
-        0;
-
-
-    joystickY =
-        0;
-
-
-    joystickStick.style.transform =
-
-        'translate(-50%, -50%)';
-
-}
-
-
-
-joystickZone.addEventListener(
-
-    'pointerdown',
-
-    event => {
-
-
-        if(
-            mode !== 'walk'
-        ) return;
-
-
-        joystickPointer =
-            event.pointerId;
-
-
-        joystickZone
-            .setPointerCapture(
-                event.pointerId
+            console.log(
+                'Tela cheia indisponível.'
             );
-
-
-        updateJoystick(
-            event
-        );
-
-    }
-
-);
-
-
-
-joystickZone.addEventListener(
-
-    'pointermove',
-
-    event => {
-
-
-        if(
-            event.pointerId !==
-            joystickPointer
-        ) return;
-
-
-        updateJoystick(
-            event
-        );
-
-    }
-
-);
-
-
-
-joystickZone.addEventListener(
-
-    'pointerup',
-
-    event => {
-
-
-        if(
-            event.pointerId ===
-            joystickPointer
-        ) {
-
-
-            joystickPointer =
-                null;
-
-
-            resetJoystick();
 
         }
 
@@ -1524,22 +1305,129 @@ joystickZone.addEventListener(
 
 
 
-joystickZone.addEventListener(
+/* =====================================================
+   TECLADO PC
+===================================================== */
 
-    'pointercancel',
+const keys = {
 
-    () => {
+    forward: false,
+
+    backward: false,
+
+    left: false,
+
+    right: false,
+
+    up: false,
+
+    down: false
+};
 
 
-        joystickPointer =
-            null;
+
+window.addEventListener(
+
+    'keydown',
+
+    e => {
 
 
-        resetJoystick();
+        if(e.code === 'KeyW')
+            keys.forward = true;
+
+
+        if(e.code === 'KeyS')
+            keys.backward = true;
+
+
+        if(e.code === 'KeyA')
+            keys.left = true;
+
+
+        if(e.code === 'KeyD')
+            keys.right = true;
+
+
+        if(e.code === 'KeyE')
+            keys.up = true;
+
+
+        if(e.code === 'KeyQ')
+            keys.down = true;
 
     }
 
 );
+
+
+
+window.addEventListener(
+
+    'keyup',
+
+    e => {
+
+
+        if(e.code === 'KeyW')
+            keys.forward = false;
+
+
+        if(e.code === 'KeyS')
+            keys.backward = false;
+
+
+        if(e.code === 'KeyA')
+            keys.left = false;
+
+
+        if(e.code === 'KeyD')
+            keys.right = false;
+
+
+        if(e.code === 'KeyE')
+            keys.up = false;
+
+
+        if(e.code === 'KeyQ')
+            keys.down = false;
+
+    }
+
+);
+
+
+
+/* =====================================================
+   JOYSTICK MOBILE
+===================================================== */
+
+const joystickArea =
+    document.getElementById(
+        'joystickArea'
+    );
+
+
+const joystickKnob =
+    document.getElementById(
+        'joystickKnob'
+    );
+
+
+let joystickId =
+    null;
+
+
+let joyX =
+    0;
+
+
+let joyY =
+    0;
+
+
+const JOYSTICK_RADIUS =
+    45;
 
 
 
@@ -1549,126 +1437,99 @@ function updateJoystick(
 
 
     const rect =
-
-        joystickZone
+        joystickArea
         .getBoundingClientRect();
 
 
-    const centerX =
+    const cx =
+        rect.left +
         rect.width / 2;
 
 
-    const centerY =
+    const cy =
+        rect.top +
         rect.height / 2;
 
 
     let dx =
-
-        event.clientX -
-        rect.left -
-        centerX;
+        event.clientX - cx;
 
 
     let dy =
-
-        event.clientY -
-        rect.top -
-        centerY;
+        event.clientY - cy;
 
 
-    const distance =
-
-        Math.sqrt(
-
-            dx * dx +
-
-            dy * dy
-
+    const length =
+        Math.hypot(
+            dx,
+            dy
         );
 
 
+
     if(
-        distance >
-        joystickRadius
+        length >
+        JOYSTICK_RADIUS
     ) {
 
 
         dx =
-
             dx /
-            distance *
-            joystickRadius;
+            length *
+            JOYSTICK_RADIUS;
 
 
         dy =
-
             dy /
-            distance *
-            joystickRadius;
+            length *
+            JOYSTICK_RADIUS;
 
     }
 
 
-    joystickX =
 
+    joyX =
         dx /
-        joystickRadius;
+        JOYSTICK_RADIUS;
 
 
-    joystickY =
-
+    joyY =
         dy /
-        joystickRadius;
+        JOYSTICK_RADIUS;
 
 
-    joystickStick.style.transform =
 
-        `translate(
-            calc(-50% + ${dx}px),
-            calc(-50% + ${dy}px)
-        )`;
+    joystickKnob.style.transform =
+
+        `translate(${dx}px, ${dy}px)`;
 
 }
 
 
 
-/* =========================================================
-   OLHAR COM O DEDO
-========================================================= */
-
-const lookZone =
-    document.getElementById(
-        'lookZone'
-    );
+function resetJoystick() {
 
 
-let lookPointer =
-    null;
+    joyX =
+        0;
 
 
-let previousLookX =
-    0;
+    joyY =
+        0;
 
 
-let previousLookY =
-    0;
+    joystickKnob.style.transform =
+        'translate(0px, 0px)';
 
-
-/*
-   Sensibilidade do movimento
-   da câmera no celular.
-*/
-
-const touchLookSensitivity =
-    0.004;
+}
 
 
 
-lookZone.addEventListener(
+joystickArea.addEventListener(
 
     'pointerdown',
 
-    event => {
+    e => {
 
 
         if(
@@ -1676,22 +1537,22 @@ lookZone.addEventListener(
         ) return;
 
 
-        lookPointer =
-            event.pointerId;
+        e.preventDefault();
 
 
-        previousLookX =
-            event.clientX;
+        joystickId =
+            e.pointerId;
 
 
-        previousLookY =
-            event.clientY;
+        joystickArea
+        .setPointerCapture(
+            e.pointerId
+        );
 
 
-        lookZone
-            .setPointerCapture(
-                event.pointerId
-            );
+        updateJoystick(
+            e
+        );
 
     }
 
@@ -1699,46 +1560,181 @@ lookZone.addEventListener(
 
 
 
-lookZone.addEventListener(
+joystickArea.addEventListener(
 
     'pointermove',
 
-    event => {
+    e => {
 
 
         if(
-            event.pointerId !==
-            lookPointer
+            e.pointerId !==
+            joystickId
         ) return;
 
 
-        const dx =
+        e.preventDefault();
 
-            event.clientX -
-            previousLookX;
+
+        updateJoystick(
+            e
+        );
+
+    }
+
+);
+
+
+
+function stopJoystick(
+    e
+) {
+
+
+    if(
+        joystickId === null
+    ) return;
+
+
+    if(
+        e &&
+        e.pointerId !== joystickId
+    ) return;
+
+
+    joystickId =
+        null;
+
+
+    resetJoystick();
+
+}
+
+
+
+joystickArea.addEventListener(
+    'pointerup',
+    stopJoystick
+);
+
+
+joystickArea.addEventListener(
+    'pointercancel',
+    stopJoystick
+);
+
+
+
+/* =====================================================
+   OLHAR NO CELULAR
+===================================================== */
+
+const touchLook =
+    document.getElementById(
+        'touchLook'
+    );
+
+
+let lookId =
+    null;
+
+
+let lastX =
+    0;
+
+
+let lastY =
+    0;
+
+
+
+/*
+   Quanto maior, mais rápido gira.
+
+   0.0035 fica relativamente suave.
+*/
+
+const LOOK_SPEED =
+    0.0035;
+
+
+
+touchLook.addEventListener(
+
+    'pointerdown',
+
+    e => {
+
+
+        if(
+            mode !== 'walk'
+        ) return;
+
+
+        e.preventDefault();
+
+
+        lookId =
+            e.pointerId;
+
+
+        lastX =
+            e.clientX;
+
+
+        lastY =
+            e.clientY;
+
+
+        touchLook
+        .setPointerCapture(
+            e.pointerId
+        );
+
+    }
+
+);
+
+
+
+touchLook.addEventListener(
+
+    'pointermove',
+
+    e => {
+
+
+        if(
+            e.pointerId !==
+            lookId
+        ) return;
+
+
+        e.preventDefault();
+
+
+
+        const dx =
+            e.clientX -
+            lastX;
 
 
         const dy =
-
-            event.clientY -
-            previousLookY;
-
-
-        previousLookX =
-            event.clientX;
-
-
-        previousLookY =
-            event.clientY;
+            e.clientY -
+            lastY;
 
 
 
-        /* =================================================
-           ROTACIONA CÂMERA
-        ================================================= */
+        lastX =
+            e.clientX;
 
-        const euler =
 
+        lastY =
+            e.clientY;
+
+
+
+        const rotation =
             new THREE.Euler(
 
                 0,
@@ -1748,60 +1744,59 @@ lookZone.addEventListener(
                 0,
 
                 'YXZ'
-
             );
 
 
-        euler.setFromQuaternion(
+        rotation
+        .setFromQuaternion(
+
             camera.quaternion
+
         );
 
 
-        euler.y -=
+
+        rotation.y -=
 
             dx *
-            touchLookSensitivity;
+            LOOK_SPEED;
 
 
-        euler.x -=
+
+        rotation.x -=
 
             dy *
-            touchLookSensitivity;
+            LOOK_SPEED;
 
 
 
-        /*
-           Impede virar a câmera
-           completamente de cabeça para baixo.
-        */
-
-        const limit =
+        const maxPitch =
 
             Math.PI / 2 -
-            0.05;
+            0.08;
 
 
-        euler.x =
+
+        rotation.x =
 
             Math.max(
 
-                -limit,
+                -maxPitch,
 
                 Math.min(
 
-                    limit,
+                    maxPitch,
 
-                    euler.x
-
+                    rotation.x
                 )
-
             );
+
 
 
         camera.quaternion
-            .setFromEuler(
-                euler
-            );
+        .setFromEuler(
+            rotation
+        );
 
     }
 
@@ -1809,49 +1804,45 @@ lookZone.addEventListener(
 
 
 
-lookZone.addEventListener(
+function stopLooking(
+    e
+) {
 
+
+    if(
+        lookId === null
+    ) return;
+
+
+    if(
+        e &&
+        e.pointerId !== lookId
+    ) return;
+
+
+    lookId =
+        null;
+
+}
+
+
+
+touchLook.addEventListener(
     'pointerup',
-
-    event => {
-
-
-        if(
-            event.pointerId ===
-            lookPointer
-        ) {
-
-
-            lookPointer =
-                null;
-
-        }
-
-    }
-
+    stopLooking
 );
 
 
-
-lookZone.addEventListener(
-
+touchLook.addEventListener(
     'pointercancel',
-
-    () => {
-
-
-        lookPointer =
-            null;
-
-    }
-
+    stopLooking
 );
 
 
 
-/* =========================================================
-   SUBIR / DESCER NO CELULAR
-========================================================= */
+/* =====================================================
+   SUBIR E DESCER MOBILE
+===================================================== */
 
 let mobileUp =
     false;
@@ -1861,55 +1852,55 @@ let mobileDown =
     false;
 
 
-const upBtn =
+
+const upButton =
     document.getElementById(
-        'upBtn'
+        'upButton'
     );
 
 
-const downBtn =
+const downButton =
     document.getElementById(
-        'downBtn'
+        'downButton'
     );
 
 
 
-upBtn.addEventListener(
+upButton.addEventListener(
 
     'pointerdown',
 
-    () => {
+    e => {
 
-        mobileUp =
-            true;
+        e.preventDefault();
+
+        mobileUp = true;
 
     }
 
 );
 
 
-upBtn.addEventListener(
+upButton.addEventListener(
 
     'pointerup',
 
     () => {
 
-        mobileUp =
-            false;
+        mobileUp = false;
 
     }
 
 );
 
 
-upBtn.addEventListener(
+upButton.addEventListener(
 
     'pointercancel',
 
     () => {
 
-        mobileUp =
-            false;
+        mobileUp = false;
 
     }
 
@@ -1917,42 +1908,41 @@ upBtn.addEventListener(
 
 
 
-downBtn.addEventListener(
+downButton.addEventListener(
 
     'pointerdown',
 
-    () => {
+    e => {
 
-        mobileDown =
-            true;
+        e.preventDefault();
+
+        mobileDown = true;
 
     }
 
 );
 
 
-downBtn.addEventListener(
+downButton.addEventListener(
 
     'pointerup',
 
     () => {
 
-        mobileDown =
-            false;
+        mobileDown = false;
 
     }
 
 );
 
 
-downBtn.addEventListener(
+downButton.addEventListener(
 
     'pointercancel',
 
     () => {
 
-        mobileDown =
-            false;
+        mobileDown = false;
 
     }
 
@@ -1960,16 +1950,24 @@ downBtn.addEventListener(
 
 
 
-/* =========================================================
+/* =====================================================
    MOVIMENTAÇÃO
-========================================================= */
+===================================================== */
 
 const clock =
     new THREE.Clock();
 
 
+const forward =
+    new THREE.Vector3();
 
-function updateWalk(
+
+const right =
+    new THREE.Vector3();
+
+
+
+function updateMovement(
     delta
 ) {
 
@@ -1980,228 +1978,206 @@ function updateWalk(
 
 
 
-    /* =====================================================
-       VELOCIDADE
+    /*
+       VELOCIDADE DE CAMINHADA
 
-       Se depois quiser andar mais devagar,
-       diminua 0.08.
-    ===================================================== */
+       Se achar rápido, alteramos depois.
+    */
 
     const speed =
-
-        modelSize *
-        0.08;
+        modelSize * 0.06;
 
 
     const distance =
-
-        speed *
-        delta;
+        speed * delta;
 
 
 
-    /* =====================================================
+    /* =============================================
        COMPUTADOR
-    ===================================================== */
+    ============================================= */
 
-    if(
-        !isTouchDevice
-    ) {
+    if(!isMobile) {
 
 
         if(
-            !walk.isLocked
+            !pointerControls ||
+            !pointerControls.isLocked
         ) return;
 
 
-        if(
-            keys.forward
-        )
 
-            walk.moveForward(
+        if(keys.forward)
+
+            pointerControls
+            .moveForward(
                 distance
             );
 
 
-        if(
-            keys.backward
-        )
+        if(keys.backward)
 
-            walk.moveForward(
+            pointerControls
+            .moveForward(
                 -distance
             );
 
 
-        if(
-            keys.right
-        )
+        if(keys.right)
 
-            walk.moveRight(
+            pointerControls
+            .moveRight(
                 distance
             );
 
 
-        if(
-            keys.left
-        )
+        if(keys.left)
 
-            walk.moveRight(
+            pointerControls
+            .moveRight(
                 -distance
             );
 
 
-        if(
-            keys.up
-        )
+        if(keys.up)
 
             camera.position.y +=
                 distance;
 
 
-        if(
-            keys.down
-        )
+        if(keys.down)
 
             camera.position.y -=
                 distance;
+
+
+        return;
 
     }
 
 
 
-    /* =====================================================
+    /* =============================================
        CELULAR
-    ===================================================== */
-
-    else {
+    ============================================= */
 
 
-        /*
-           Dead zone pequena para evitar
-           movimento involuntário.
-        */
+    /*
+       Direção em que a câmera está olhando.
+    */
 
-        const deadZone =
-            0.08;
-
-
-        let x =
-            joystickX;
-
-
-        let y =
-            joystickY;
-
-
-        if(
-            Math.abs(x) <
-            deadZone
-        )
-
-            x = 0;
-
-
-        if(
-            Math.abs(y) <
-            deadZone
-        )
-
-            y = 0;
+    camera.getWorldDirection(
+        forward
+    );
 
 
 
-        /* =================================================
-           DIREÇÃO DA CÂMERA
-        ================================================= */
+    /*
+       Remove componente vertical.
 
-        const forward =
+       Assim olhar para cima não faz
+       o usuário começar a voar.
+    */
 
-            new THREE.Vector3();
-
-
-        camera.getWorldDirection(
-            forward
-        );
+    forward.y =
+        0;
 
 
-        /*
-           Caminhada horizontal.
-
-           Olhar para cima ou para baixo
-           não faz o usuário voar.
-        */
-
-        forward.y =
-            0;
-
+    if(
+        forward.lengthSq() >
+        0.0001
+    ) {
 
         forward.normalize();
 
-
-
-        const right =
-
-            new THREE.Vector3()
-
-            .crossVectors(
-
-                forward,
-
-                camera.up
-
-            )
-
-            .normalize();
-
-
-
-        camera.position
-            .addScaledVector(
-
-                forward,
-
-                -y *
-                distance
-
-            );
-
-
-        camera.position
-            .addScaledVector(
-
-                right,
-
-                x *
-                distance
-
-            );
-
-
-
-        if(
-            mobileUp
-        )
-
-            camera.position.y +=
-                distance;
-
-
-        if(
-            mobileDown
-        )
-
-            camera.position.y -=
-                distance;
-
     }
+
+
+
+    /*
+       Vetor lateral.
+    */
+
+    right
+    .crossVectors(
+
+        forward,
+
+        camera.up
+    )
+    .normalize();
+
+
+
+    /*
+       Pequena zona morta do joystick.
+    */
+
+    let x =
+        Math.abs(joyX) > 0.07
+        ? joyX
+        : 0;
+
+
+    let y =
+        Math.abs(joyY) > 0.07
+        ? joyY
+        : 0;
+
+
+
+    /*
+       Frente / trás
+    */
+
+    camera.position
+    .addScaledVector(
+
+        forward,
+
+        -y *
+        distance
+    );
+
+
+
+    /*
+       Esquerda / direita
+    */
+
+    camera.position
+    .addScaledVector(
+
+        right,
+
+        x *
+        distance
+    );
+
+
+
+    /*
+       Altura
+    */
+
+    if(mobileUp)
+
+        camera.position.y +=
+            distance;
+
+
+    if(mobileDown)
+
+        camera.position.y -=
+            distance;
 
 }
 
 
 
-/* =========================================================
+/* =====================================================
    LOOP
-========================================================= */
+===================================================== */
 
 function animate() {
 
@@ -2211,6 +2187,7 @@ function animate() {
     );
 
 
+
     const delta =
 
         Math.min(
@@ -2218,7 +2195,6 @@ function animate() {
             clock.getDelta(),
 
             0.05
-
         );
 
 
@@ -2236,7 +2212,7 @@ function animate() {
     else {
 
 
-        updateWalk(
+        updateMovement(
             delta
         );
 
@@ -2249,7 +2225,6 @@ function animate() {
         scene,
 
         camera
-
     );
 
 }
@@ -2260,9 +2235,9 @@ animate();
 
 
 
-/* =========================================================
+/* =====================================================
    REDIMENSIONAMENTO
-========================================================= */
+===================================================== */
 
 window.addEventListener(
 
@@ -2279,7 +2254,8 @@ window.addEventListener(
 
 
         camera
-            .updateProjectionMatrix();
+        .updateProjectionMatrix();
+
 
 
         renderer.setSize(
@@ -2287,7 +2263,6 @@ window.addEventListener(
             window.innerWidth,
 
             window.innerHeight
-
         );
 
     }
@@ -2299,4 +2274,5 @@ window.addEventListener(
 
 
 </body>
+
 </html>
