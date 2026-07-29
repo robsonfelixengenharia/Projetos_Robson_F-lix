@@ -2,178 +2,369 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Félix Engenharia | Projeto 3D</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    html, body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #e8e8e8;
-    }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-    #viewer {
-        position: absolute;
-        inset: 0;
-    }
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #e8e8e8;
+    touch-action: none;
+}
 
-    canvas {
-        display: block;
-    }
+#viewer {
+    position: absolute;
+    inset: 0;
+}
+
+canvas {
+    display: block;
+}
+
+/* =========================================================
+   BARRA SUPERIOR
+========================================================= */
+
+#topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 22px;
+
+    background: rgba(18,18,18,0.92);
+    color: white;
+
+    z-index: 20;
+}
+
+#empresa {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#buttons {
+    display: flex;
+    gap: 8px;
+}
+
+button {
+    border: 0;
+    border-radius: 20px;
+
+    padding: 10px 16px;
+
+    background: #333;
+    color: white;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+button:hover {
+    background: #555;
+}
+
+button.active {
+    background: #16853c;
+}
+
+
+/* =========================================================
+   CARREGAMENTO
+========================================================= */
+
+#loading {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background: rgba(20,20,20,0.92);
+    color: white;
+
+    padding: 20px 30px;
+
+    border-radius: 14px;
+
+    z-index: 50;
+
+    text-align: center;
+}
+
+#progress {
+    margin-top: 10px;
+
+    font-size: 13px;
+
+    color: #ccc;
+}
+
+
+/* =========================================================
+   AJUDA
+========================================================= */
+
+#walkHelp {
+    position: absolute;
+
+    left: 50%;
+    bottom: 22px;
+
+    transform: translateX(-50%);
+
+    background: rgba(20,20,20,0.82);
+    color: white;
+
+    padding: 10px 18px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    z-index: 15;
+
+    display: none;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MIRA CENTRAL
+========================================================= */
+
+#crosshair {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 8px;
+    height: 8px;
+
+    transform: translate(-50%, -50%);
+
+    border: 2px solid white;
+    border-radius: 50%;
+
+    z-index: 12;
+
+    display: none;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CONTROLES TOUCH
+========================================================= */
+
+#mobileControls {
+    display: none;
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 11;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ÁREA DO JOYSTICK
+========================================================= */
+
+#joystickZone {
+    position: absolute;
+
+    left: 18px;
+    bottom: 25px;
+
+    width: 150px;
+    height: 150px;
+
+    pointer-events: auto;
+
+    touch-action: none;
+}
+
+
+/* círculo externo */
+
+#joystickBase {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 120px;
+    height: 120px;
+
+    border-radius: 50%;
+
+    background: rgba(20,20,20,0.35);
+
+    border: 2px solid rgba(255,255,255,0.50);
+}
+
+
+/* círculo interno */
+
+#joystickStick {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.75);
+
+    border: 2px solid rgba(255,255,255,0.90);
+}
+
+
+/* =========================================================
+   ÁREA PARA OLHAR
+========================================================= */
+
+#lookZone {
+    position: absolute;
+
+    right: 0;
+    top: 64px;
+
+    width: 55%;
+    bottom: 0;
+
+    pointer-events: auto;
+
+    touch-action: none;
+}
+
+
+/* =========================================================
+   BOTÕES SUBIR / DESCER
+========================================================= */
+
+#verticalControls {
+    position: absolute;
+
+    right: 20px;
+    bottom: 30px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    pointer-events: auto;
+}
+
+.verticalBtn {
+    width: 52px;
+    height: 52px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+
+    background: rgba(20,20,20,0.60);
+
+    border: 1px solid rgba(255,255,255,0.50);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
 
     #topbar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 64px;
+        height: 58px;
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        padding: 0 22px;
-
-        background: rgba(18,18,18,0.92);
-        color: white;
-
-        z-index: 10;
+        padding: 0 8px;
     }
 
     #empresa {
-        font-size: 20px;
-        font-weight: bold;
-        letter-spacing: 1px;
+        font-size: 12px;
     }
 
     #buttons {
-        display: flex;
-        gap: 8px;
+        gap: 4px;
     }
 
     button {
-        border: 0;
-        border-radius: 20px;
-        padding: 10px 16px;
+        padding: 8px 8px;
 
-        background: #333;
-        color: white;
-
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    button:hover {
-        background: #555;
-    }
-
-    button.active {
-        background: #16853c;
-    }
-
-    #loading {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-
-        transform: translate(-50%, -50%);
-
-        background: rgba(20,20,20,0.90);
-        color: white;
-
-        padding: 18px 28px;
-        border-radius: 14px;
-
-        z-index: 20;
-
-        text-align: center;
-    }
-
-    #progress {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #ccc;
+        font-size: 10px;
     }
 
     #walkHelp {
-        position: absolute;
+        top: 70px;
+        bottom: auto;
 
-        left: 50%;
-        bottom: 25px;
+        font-size: 10px;
 
-        transform: translateX(-50%);
-
-        background: rgba(20,20,20,0.85);
-        color: white;
-
-        padding: 12px 20px;
-        border-radius: 22px;
-
-        font-size: 13px;
-
-        z-index: 10;
-
-        display: none;
+        white-space: nowrap;
     }
 
-    #crosshair {
-        position: absolute;
-
-        left: 50%;
-        top: 50%;
-
-        width: 8px;
-        height: 8px;
-
-        transform: translate(-50%, -50%);
-
-        border: 2px solid white;
-        border-radius: 50%;
-
-        z-index: 10;
-
-        display: none;
-
-        pointer-events: none;
+    #lookZone {
+        top: 58px;
     }
 
-    @media (max-width: 700px) {
+}
 
-        #empresa {
-            font-size: 14px;
-        }
-
-        #topbar {
-            height: 58px;
-            padding: 0 10px;
-        }
-
-        button {
-            padding: 8px 10px;
-            font-size: 11px;
-        }
-
-        #walkHelp {
-            font-size: 11px;
-            bottom: 15px;
-            white-space: nowrap;
-        }
-    }
 </style>
 
 </head>
 
+
 <body>
 
+
 <div id="viewer"></div>
+
+
+<!-- =====================================================
+     BARRA SUPERIOR
+===================================================== -->
 
 <div id="topbar">
 
@@ -203,90 +394,221 @@
 
 </div>
 
+
+<!-- =====================================================
+     CARREGAMENTO
+===================================================== -->
+
 <div id="loading">
+
     Carregando projeto 3D...
-    <div id="progress">0%</div>
+
+    <div id="progress">
+        0%
+    </div>
+
 </div>
 
-<div id="walkHelp">
-    W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar
-    &nbsp; • &nbsp; E/Q = subir/descer &nbsp; • &nbsp; ESC = sair
-</div>
+
+<!-- =====================================================
+     AJUDA
+===================================================== -->
+
+<div id="walkHelp"></div>
+
 
 <div id="crosshair"></div>
 
 
+<!-- =====================================================
+     CONTROLES DO CELULAR
+===================================================== -->
+
+<div id="mobileControls">
+
+
+    <!-- JOYSTICK -->
+
+    <div id="joystickZone">
+
+        <div id="joystickBase">
+
+            <div id="joystickStick"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ÁREA PARA GIRAR A CÂMERA -->
+
+    <div id="lookZone"></div>
+
+
+    <!-- SUBIR / DESCER -->
+
+    <div id="verticalControls">
+
+        <button
+            id="upBtn"
+            class="verticalBtn">
+            ▲
+        </button>
+
+        <button
+            id="downBtn"
+            class="verticalBtn">
+            ▼
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     THREE.JS
+===================================================== -->
+
 <script type="importmap">
+
 {
     "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+
+        "three":
+        "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+
+        "three/addons/":
+        "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+
     }
 }
+
 </script>
+
 
 
 <script type="module">
 
+
 import * as THREE from 'three';
 
-import { OrbitControls }
+
+import {
+    OrbitControls
+}
 from 'three/addons/controls/OrbitControls.js';
 
-import { PointerLockControls }
+
+import {
+    PointerLockControls
+}
 from 'three/addons/controls/PointerLockControls.js';
 
-import { GLTFLoader }
+
+import {
+    GLTFLoader
+}
 from 'three/addons/loaders/GLTFLoader.js';
+
+
+
+/* =========================================================
+   DETECTA CELULAR / TOUCH
+========================================================= */
+
+const isTouchDevice =
+
+    ('ontouchstart' in window) ||
+
+    navigator.maxTouchPoints > 0;
+
 
 
 /* =========================================================
    CENA
 ========================================================= */
 
-const scene = new THREE.Scene();
+const scene =
+    new THREE.Scene();
 
-scene.background = new THREE.Color(0xeeeeee);
+
+scene.background =
+    new THREE.Color(
+        0xeeeeee
+    );
+
 
 
 /* =========================================================
    CÂMERA
 
-   65° = perspectiva grande-angular
+   65° = perspectiva grande angular
 ========================================================= */
 
-const camera = new THREE.PerspectiveCamera(
-    65,
-    window.innerWidth / window.innerHeight,
-    0.05,
-    10000
-);
+const camera =
+    new THREE.PerspectiveCamera(
+
+        65,
+
+        window.innerWidth /
+        window.innerHeight,
+
+        0.05,
+
+        10000
+
+    );
+
 
 
 /* =========================================================
    RENDER
 ========================================================= */
 
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
+const renderer =
+    new THREE.WebGLRenderer({
+
+        antialias: true
+
+    });
+
 
 renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
+
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
+
 );
+
 
 renderer.setSize(
+
     window.innerWidth,
+
     window.innerHeight
+
 );
 
-renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-renderer.shadowMap.enabled = true;
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+
+renderer.shadowMap.enabled =
+    true;
+
 
 document
     .getElementById('viewer')
-    .appendChild(renderer.domElement);
+    .appendChild(
+        renderer.domElement
+    );
+
 
 
 /* =========================================================
@@ -295,87 +617,128 @@ document
 
 const ambientLight =
     new THREE.HemisphereLight(
+
         0xffffff,
+
         0x777777,
+
         2.5
+
     );
 
-scene.add(ambientLight);
+
+scene.add(
+    ambientLight
+);
 
 
 const sun =
     new THREE.DirectionalLight(
+
         0xffffff,
+
         3
+
     );
 
+
 sun.position.set(
+
     50,
+
     100,
+
     50
+
 );
 
-scene.add(sun);
+
+scene.add(
+    sun
+);
+
 
 
 /* =========================================================
-   CONTROLE DA VISTA GERAL
+   ORBIT CONTROLS
 ========================================================= */
 
 const orbit =
     new OrbitControls(
+
         camera,
+
         renderer.domElement
+
     );
 
-orbit.enableDamping = true;
 
-orbit.dampingFactor = 0.07;
-
-
-/*
-   VELOCIDADE DO ZOOM
-
-   O valor padrão é 1.
-   Coloquei 0.25 para deixar o zoom
-   aproximadamente 4 vezes mais lento.
-*/
-
-orbit.zoomSpeed = 0.40;
+orbit.enableDamping =
+    true;
 
 
-/*
-   MOVIMENTAÇÃO LATERAL
-*/
-
-orbit.enablePan = true;
-
-orbit.panSpeed = 0.7;
+orbit.dampingFactor =
+    0.07;
 
 
-/*
-   Esses valores serão recalculados
-   automaticamente depois que o modelo carregar.
-*/
+orbit.zoomSpeed =
+    0.50;
 
-orbit.minDistance = 1;
 
-orbit.maxDistance = 10000;
+orbit.enablePan =
+    true;
+
+
+orbit.panSpeed =
+    0.7;
+
+
+orbit.minDistance =
+    1;
+
+
+orbit.maxDistance =
+    10000;
+
 
 
 /* =========================================================
-   MODO CAMINHAR
+   WALK - COMPUTADOR
 ========================================================= */
 
 const walk =
     new PointerLockControls(
+
         camera,
+
         renderer.domElement
+
     );
 
-walk.pointerSpeed = 0.8;
 
-let mode = 'orbit';
+walk.pointerSpeed =
+    0.8;
+
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let mode =
+    'orbit';
+
+
+let model;
+
+
+let modelCenter =
+    new THREE.Vector3();
+
+
+let modelSize =
+    1;
+
 
 
 /* =========================================================
@@ -383,199 +746,252 @@ let mode = 'orbit';
 ========================================================= */
 
 const keys = {
+
     forward: false,
+
     backward: false,
+
     left: false,
+
     right: false,
+
     up: false,
+
     down: false
+
 };
 
 
+
 document.addEventListener(
+
     'keydown',
-    (event) => {
+
+    event => {
 
         switch(event.code) {
 
             case 'KeyW':
             case 'ArrowUp':
+
                 keys.forward = true;
+
                 break;
+
 
             case 'KeyS':
             case 'ArrowDown':
+
                 keys.backward = true;
+
                 break;
+
 
             case 'KeyA':
             case 'ArrowLeft':
+
                 keys.left = true;
+
                 break;
+
 
             case 'KeyD':
             case 'ArrowRight':
+
                 keys.right = true;
+
                 break;
+
 
             case 'KeyE':
+
                 keys.up = true;
+
                 break;
 
+
             case 'KeyQ':
+
                 keys.down = true;
+
                 break;
+
         }
+
     }
+
 );
+
 
 
 document.addEventListener(
+
     'keyup',
-    (event) => {
+
+    event => {
 
         switch(event.code) {
 
             case 'KeyW':
             case 'ArrowUp':
+
                 keys.forward = false;
+
                 break;
+
 
             case 'KeyS':
             case 'ArrowDown':
+
                 keys.backward = false;
+
                 break;
+
 
             case 'KeyA':
             case 'ArrowLeft':
+
                 keys.left = false;
+
                 break;
+
 
             case 'KeyD':
             case 'ArrowRight':
+
                 keys.right = false;
+
                 break;
+
 
             case 'KeyE':
+
                 keys.up = false;
+
                 break;
+
 
             case 'KeyQ':
+
                 keys.down = false;
+
                 break;
+
         }
+
     }
+
 );
 
-
-/* =========================================================
-   MODELO
-========================================================= */
-
-const loader = new GLTFLoader();
-
-let model;
-
-let modelCenter =
-    new THREE.Vector3();
-
-let modelSize = 1;
 
 
 /* =========================================================
    CARREGAMENTO DO GLB
 ========================================================= */
 
+const loader =
+    new GLTFLoader();
+
+
 loader.load(
 
     /*
-       Se você substituir o modelo no GitHub,
-       altere v=11 para v=12, v=13 etc.
-       Isso evita que o navegador carregue
-       uma versão antiga do GLB.
+       Se substituir o GLB futuramente,
+       altere v=20 para v=21, v=22 etc.
     */
 
-    'modelo.glb?v=11',
+    'modelo.glb?v=20',
 
 
     function(gltf) {
 
-        model = gltf.scene;
 
-        scene.add(model);
+        model =
+            gltf.scene;
+
+
+        scene.add(
+            model
+        );
+
 
 
         /* =================================================
-           CALCULA TAMANHO DO PROJETO
+           TAMANHO DO PROJETO
         ================================================= */
 
         const box =
+
             new THREE.Box3()
-            .setFromObject(model);
+
+            .setFromObject(
+                model
+            );
+
 
         const size =
+
             box.getSize(
+
                 new THREE.Vector3()
+
             );
+
 
         box.getCenter(
             modelCenter
         );
 
+
         modelSize =
+
             Math.max(
+
                 size.x,
+
                 size.y,
+
                 size.z
+
             );
 
 
+
         /* =================================================
-           LIMITES DE ZOOM
+           LIMITE DE ZOOM
 
-           8% do tamanho geral do projeto =
-           aproxima bastante, mas evita aquele
-           zoom exagerado.
+           EXATAMENTE COMO VOCÊ PEDIU:
 
-           Se depois você quiser limitar ainda mais,
-           podemos aumentar 0.08 para 0.10 ou 0.12.
+           10% do tamanho do modelo.
         ================================================= */
 
         orbit.minDistance =
             modelSize * 0.10;
 
+
         orbit.maxDistance =
             modelSize * 5;
 
 
+
         /* =================================================
-           POSIÇÃO INICIAL DA CÂMERA
+           POSIÇÃO INICIAL
         ================================================= */
 
-        camera.position.set(
-
-            modelCenter.x +
-            modelSize * 0.75,
-
-            modelCenter.y +
-            modelSize * 0.45,
-
-            modelCenter.z +
-            modelSize * 0.75
-
-        );
+        setHomeView();
 
 
-        orbit.target.copy(
-            modelCenter
-        );
 
-        orbit.update();
-
+        /* =================================================
+           FINALIZA CARREGAMENTO
+        ================================================= */
 
         document
-            .getElementById('loading')
-            .style.display = 'none';
+            .getElementById(
+                'loading'
+            )
+            .style.display =
+            'none';
 
     },
 
@@ -586,20 +1002,33 @@ loader.load(
 
     function(xhr) {
 
+
         if(xhr.total) {
 
+
             const percentage =
+
                 Math.round(
+
                     xhr.loaded /
+
                     xhr.total *
+
                     100
+
                 );
 
+
             document
-                .getElementById('progress')
+                .getElementById(
+                    'progress'
+                )
                 .innerText =
+
                 percentage + '%';
+
         }
+
     },
 
 
@@ -609,11 +1038,18 @@ loader.load(
 
     function(error) {
 
-        console.error(error);
+
+        console.error(
+            error
+        );
+
 
         document
-            .getElementById('loading')
+            .getElementById(
+                'loading'
+            )
             .innerHTML =
+
             'Erro ao carregar o modelo 3D';
 
     }
@@ -621,8 +1057,43 @@ loader.load(
 );
 
 
+
 /* =========================================================
-   BOTÕES
+   VISTA INICIAL
+========================================================= */
+
+function setHomeView() {
+
+
+    camera.position.set(
+
+        modelCenter.x +
+        modelSize * 0.75,
+
+
+        modelCenter.y +
+        modelSize * 0.45,
+
+
+        modelCenter.z +
+        modelSize * 0.75
+
+    );
+
+
+    orbit.target.copy(
+        modelCenter
+    );
+
+
+    orbit.update();
+
+}
+
+
+
+/* =========================================================
+   ELEMENTOS
 ========================================================= */
 
 const orbitBtn =
@@ -630,20 +1101,24 @@ const orbitBtn =
         'orbitBtn'
     );
 
+
 const walkBtn =
     document.getElementById(
         'walkBtn'
     );
+
 
 const homeBtn =
     document.getElementById(
         'homeBtn'
     );
 
+
 const walkHelp =
     document.getElementById(
         'walkHelp'
     );
+
 
 const crosshair =
     document.getElementById(
@@ -651,146 +1126,225 @@ const crosshair =
     );
 
 
+const mobileControls =
+    document.getElementById(
+        'mobileControls'
+    );
+
+
+
 /* =========================================================
-   VISTA GERAL
+   MODO VISTA GERAL
 ========================================================= */
 
-orbitBtn.addEventListener(
-    'click',
-    () => {
+function enableOrbitMode() {
 
-        mode = 'orbit';
+
+    mode =
+        'orbit';
+
+
+    if(
+        walk.isLocked
+    ) {
 
         walk.unlock();
 
-        orbit.enabled = true;
-
-        orbitBtn
-            .classList
-            .add('active');
-
-        walkBtn
-            .classList
-            .remove('active');
-
-        walkHelp.style.display =
-            'none';
-
-        crosshair.style.display =
-            'none';
-
     }
+
+
+    orbit.enabled =
+        true;
+
+
+    orbitBtn
+        .classList
+        .add(
+            'active'
+        );
+
+
+    walkBtn
+        .classList
+        .remove(
+            'active'
+        );
+
+
+    walkHelp.style.display =
+        'none';
+
+
+    crosshair.style.display =
+        'none';
+
+
+    mobileControls.style.display =
+        'none';
+
+}
+
+
+
+orbitBtn.addEventListener(
+
+    'click',
+
+    enableOrbitMode
+
 );
 
 
+
 /* =========================================================
-   CAMINHAR
+   MODO CAMINHAR
 ========================================================= */
 
-walkBtn.addEventListener(
-    'click',
-    () => {
+function enableWalkMode() {
 
-        mode = 'walk';
 
-        orbit.enabled = false;
+    mode =
+        'walk';
+
+
+    orbit.enabled =
+        false;
+
+
+    walkBtn
+        .classList
+        .add(
+            'active'
+        );
+
+
+    orbitBtn
+        .classList
+        .remove(
+            'active'
+        );
+
+
+    crosshair.style.display =
+        'block';
+
+
+
+    /* =====================================================
+       CELULAR
+    ===================================================== */
+
+    if(
+        isTouchDevice
+    ) {
+
+
+        mobileControls.style.display =
+            'block';
+
+
+        walkHelp.innerHTML =
+
+            'Joystick = andar • Arraste o lado direito = olhar';
+
+
+        walkHelp.style.display =
+            'block';
+
+    }
+
+
+    /* =====================================================
+       COMPUTADOR
+    ===================================================== */
+
+    else {
+
+
+        mobileControls.style.display =
+            'none';
+
+
+        walkHelp.innerHTML =
+
+            'W A S D = caminhar • Mouse = olhar • E/Q = subir/descer • ESC = liberar mouse';
+
+
+        walkHelp.style.display =
+            'block';
+
 
         walk.lock();
 
-        walkBtn
-            .classList
-            .add('active');
-
-        orbitBtn
-            .classList
-            .remove('active');
-
-        walkHelp.innerHTML =
-            'W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar &nbsp; • &nbsp; E/Q = subir/descer &nbsp; • &nbsp; ESC = sair';
-
-        walkHelp.style.display =
-            'block';
-
-        crosshair.style.display =
-            'block';
-
     }
+
+}
+
+
+
+walkBtn.addEventListener(
+
+    'click',
+
+    enableWalkMode
+
 );
 
 
+
 /* =========================================================
-   ESC
+   ESC - COMPUTADOR
 ========================================================= */
 
 walk.addEventListener(
+
     'unlock',
+
     () => {
 
-        if(mode === 'walk') {
 
-            walkHelp.innerHTML =
-                'Clique novamente em CAMINHAR para continuar';
+        if(
+            mode === 'walk' &&
+            !isTouchDevice
+        ) {
+
 
             crosshair.style.display =
                 'none';
+
+
+            walkHelp.innerHTML =
+
+                'Clique novamente em CAMINHAR para continuar';
+
         }
 
     }
+
 );
+
 
 
 /* =========================================================
-   VOLTAR À VISTA INICIAL
+   BOTÃO INÍCIO
 ========================================================= */
 
 homeBtn.addEventListener(
+
     'click',
+
     () => {
 
-        mode = 'orbit';
 
-        walk.unlock();
-
-        orbit.enabled = true;
+        enableOrbitMode();
 
 
-        camera.position.set(
-
-            modelCenter.x +
-            modelSize * 0.75,
-
-            modelCenter.y +
-            modelSize * 0.45,
-
-            modelCenter.z +
-            modelSize * 0.75
-
-        );
-
-
-        orbit.target.copy(
-            modelCenter
-        );
-
-        orbit.update();
-
-
-        orbitBtn
-            .classList
-            .add('active');
-
-        walkBtn
-            .classList
-            .remove('active');
-
-        walkHelp.style.display =
-            'none';
-
-        crosshair.style.display =
-            'none';
+        setHomeView();
 
     }
+
 );
+
 
 
 /* =========================================================
@@ -798,84 +1352,851 @@ homeBtn.addEventListener(
 ========================================================= */
 
 document
-    .getElementById('fullscreenBtn')
+    .getElementById(
+        'fullscreenBtn'
+    )
     .addEventListener(
+
         'click',
+
         () => {
+
 
             if(
                 !document.fullscreenElement
             ) {
 
+
                 document
                     .documentElement
-                    .requestFullscreen();
+                    .requestFullscreen()
+                    .catch(() => {});
 
-            } else {
+
+            }
+
+            else {
+
 
                 document
-                    .exitFullscreen();
+                    .exitFullscreen()
+                    .catch(() => {});
 
             }
 
         }
+
     );
 
 
+
 /* =========================================================
-   MOVIMENTAÇÃO NO MODO CAMINHAR
+   JOYSTICK CELULAR
+========================================================= */
+
+const joystickZone =
+    document.getElementById(
+        'joystickZone'
+    );
+
+
+const joystickStick =
+    document.getElementById(
+        'joystickStick'
+    );
+
+
+let joystickPointer =
+    null;
+
+
+let joystickX =
+    0;
+
+
+let joystickY =
+    0;
+
+
+const joystickRadius =
+    45;
+
+
+
+function resetJoystick() {
+
+
+    joystickX =
+        0;
+
+
+    joystickY =
+        0;
+
+
+    joystickStick.style.transform =
+
+        'translate(-50%, -50%)';
+
+}
+
+
+
+joystickZone.addEventListener(
+
+    'pointerdown',
+
+    event => {
+
+
+        if(
+            mode !== 'walk'
+        ) return;
+
+
+        joystickPointer =
+            event.pointerId;
+
+
+        joystickZone
+            .setPointerCapture(
+                event.pointerId
+            );
+
+
+        updateJoystick(
+            event
+        );
+
+    }
+
+);
+
+
+
+joystickZone.addEventListener(
+
+    'pointermove',
+
+    event => {
+
+
+        if(
+            event.pointerId !==
+            joystickPointer
+        ) return;
+
+
+        updateJoystick(
+            event
+        );
+
+    }
+
+);
+
+
+
+joystickZone.addEventListener(
+
+    'pointerup',
+
+    event => {
+
+
+        if(
+            event.pointerId ===
+            joystickPointer
+        ) {
+
+
+            joystickPointer =
+                null;
+
+
+            resetJoystick();
+
+        }
+
+    }
+
+);
+
+
+
+joystickZone.addEventListener(
+
+    'pointercancel',
+
+    () => {
+
+
+        joystickPointer =
+            null;
+
+
+        resetJoystick();
+
+    }
+
+);
+
+
+
+function updateJoystick(
+    event
+) {
+
+
+    const rect =
+
+        joystickZone
+        .getBoundingClientRect();
+
+
+    const centerX =
+        rect.width / 2;
+
+
+    const centerY =
+        rect.height / 2;
+
+
+    let dx =
+
+        event.clientX -
+        rect.left -
+        centerX;
+
+
+    let dy =
+
+        event.clientY -
+        rect.top -
+        centerY;
+
+
+    const distance =
+
+        Math.sqrt(
+
+            dx * dx +
+
+            dy * dy
+
+        );
+
+
+    if(
+        distance >
+        joystickRadius
+    ) {
+
+
+        dx =
+
+            dx /
+            distance *
+            joystickRadius;
+
+
+        dy =
+
+            dy /
+            distance *
+            joystickRadius;
+
+    }
+
+
+    joystickX =
+
+        dx /
+        joystickRadius;
+
+
+    joystickY =
+
+        dy /
+        joystickRadius;
+
+
+    joystickStick.style.transform =
+
+        `translate(
+            calc(-50% + ${dx}px),
+            calc(-50% + ${dy}px)
+        )`;
+
+}
+
+
+
+/* =========================================================
+   OLHAR COM O DEDO
+========================================================= */
+
+const lookZone =
+    document.getElementById(
+        'lookZone'
+    );
+
+
+let lookPointer =
+    null;
+
+
+let previousLookX =
+    0;
+
+
+let previousLookY =
+    0;
+
+
+/*
+   Sensibilidade do movimento
+   da câmera no celular.
+*/
+
+const touchLookSensitivity =
+    0.004;
+
+
+
+lookZone.addEventListener(
+
+    'pointerdown',
+
+    event => {
+
+
+        if(
+            mode !== 'walk'
+        ) return;
+
+
+        lookPointer =
+            event.pointerId;
+
+
+        previousLookX =
+            event.clientX;
+
+
+        previousLookY =
+            event.clientY;
+
+
+        lookZone
+            .setPointerCapture(
+                event.pointerId
+            );
+
+    }
+
+);
+
+
+
+lookZone.addEventListener(
+
+    'pointermove',
+
+    event => {
+
+
+        if(
+            event.pointerId !==
+            lookPointer
+        ) return;
+
+
+        const dx =
+
+            event.clientX -
+            previousLookX;
+
+
+        const dy =
+
+            event.clientY -
+            previousLookY;
+
+
+        previousLookX =
+            event.clientX;
+
+
+        previousLookY =
+            event.clientY;
+
+
+
+        /* =================================================
+           ROTACIONA CÂMERA
+        ================================================= */
+
+        const euler =
+
+            new THREE.Euler(
+
+                0,
+
+                0,
+
+                0,
+
+                'YXZ'
+
+            );
+
+
+        euler.setFromQuaternion(
+            camera.quaternion
+        );
+
+
+        euler.y -=
+
+            dx *
+            touchLookSensitivity;
+
+
+        euler.x -=
+
+            dy *
+            touchLookSensitivity;
+
+
+
+        /*
+           Impede virar a câmera
+           completamente de cabeça para baixo.
+        */
+
+        const limit =
+
+            Math.PI / 2 -
+            0.05;
+
+
+        euler.x =
+
+            Math.max(
+
+                -limit,
+
+                Math.min(
+
+                    limit,
+
+                    euler.x
+
+                )
+
+            );
+
+
+        camera.quaternion
+            .setFromEuler(
+                euler
+            );
+
+    }
+
+);
+
+
+
+lookZone.addEventListener(
+
+    'pointerup',
+
+    event => {
+
+
+        if(
+            event.pointerId ===
+            lookPointer
+        ) {
+
+
+            lookPointer =
+                null;
+
+        }
+
+    }
+
+);
+
+
+
+lookZone.addEventListener(
+
+    'pointercancel',
+
+    () => {
+
+
+        lookPointer =
+            null;
+
+    }
+
+);
+
+
+
+/* =========================================================
+   SUBIR / DESCER NO CELULAR
+========================================================= */
+
+let mobileUp =
+    false;
+
+
+let mobileDown =
+    false;
+
+
+const upBtn =
+    document.getElementById(
+        'upBtn'
+    );
+
+
+const downBtn =
+    document.getElementById(
+        'downBtn'
+    );
+
+
+
+upBtn.addEventListener(
+
+    'pointerdown',
+
+    () => {
+
+        mobileUp =
+            true;
+
+    }
+
+);
+
+
+upBtn.addEventListener(
+
+    'pointerup',
+
+    () => {
+
+        mobileUp =
+            false;
+
+    }
+
+);
+
+
+upBtn.addEventListener(
+
+    'pointercancel',
+
+    () => {
+
+        mobileUp =
+            false;
+
+    }
+
+);
+
+
+
+downBtn.addEventListener(
+
+    'pointerdown',
+
+    () => {
+
+        mobileDown =
+            true;
+
+    }
+
+);
+
+
+downBtn.addEventListener(
+
+    'pointerup',
+
+    () => {
+
+        mobileDown =
+            false;
+
+    }
+
+);
+
+
+downBtn.addEventListener(
+
+    'pointercancel',
+
+    () => {
+
+        mobileDown =
+            false;
+
+    }
+
+);
+
+
+
+/* =========================================================
+   MOVIMENTAÇÃO
 ========================================================= */
 
 const clock =
     new THREE.Clock();
 
 
-function updateWalk(delta) {
+
+function updateWalk(
+    delta
+) {
+
 
     if(
-        mode !== 'walk' ||
-        !walk.isLocked
+        mode !== 'walk'
     ) return;
 
 
-    /*
-       Velocidade de caminhada proporcional
-       ao tamanho do projeto.
-    */
+
+    /* =====================================================
+       VELOCIDADE
+
+       Se depois quiser andar mais devagar,
+       diminua 0.08.
+    ===================================================== */
 
     const speed =
-        modelSize * 0.10;
+
+        modelSize *
+        0.08;
 
 
     const distance =
-        speed * delta;
+
+        speed *
+        delta;
 
 
-    if(keys.forward)
-        walk.moveForward(distance);
 
-    if(keys.backward)
-        walk.moveForward(-distance);
+    /* =====================================================
+       COMPUTADOR
+    ===================================================== */
 
-    if(keys.right)
-        walk.moveRight(distance);
-
-    if(keys.left)
-        walk.moveRight(-distance);
+    if(
+        !isTouchDevice
+    ) {
 
 
-    /*
-       E = subir
-       Q = descer
-    */
+        if(
+            !walk.isLocked
+        ) return;
 
-    if(keys.up)
-        camera.position.y += distance;
 
-    if(keys.down)
-        camera.position.y -= distance;
+        if(
+            keys.forward
+        )
+
+            walk.moveForward(
+                distance
+            );
+
+
+        if(
+            keys.backward
+        )
+
+            walk.moveForward(
+                -distance
+            );
+
+
+        if(
+            keys.right
+        )
+
+            walk.moveRight(
+                distance
+            );
+
+
+        if(
+            keys.left
+        )
+
+            walk.moveRight(
+                -distance
+            );
+
+
+        if(
+            keys.up
+        )
+
+            camera.position.y +=
+                distance;
+
+
+        if(
+            keys.down
+        )
+
+            camera.position.y -=
+                distance;
+
+    }
+
+
+
+    /* =====================================================
+       CELULAR
+    ===================================================== */
+
+    else {
+
+
+        /*
+           Dead zone pequena para evitar
+           movimento involuntário.
+        */
+
+        const deadZone =
+            0.08;
+
+
+        let x =
+            joystickX;
+
+
+        let y =
+            joystickY;
+
+
+        if(
+            Math.abs(x) <
+            deadZone
+        )
+
+            x = 0;
+
+
+        if(
+            Math.abs(y) <
+            deadZone
+        )
+
+            y = 0;
+
+
+
+        /* =================================================
+           DIREÇÃO DA CÂMERA
+        ================================================= */
+
+        const forward =
+
+            new THREE.Vector3();
+
+
+        camera.getWorldDirection(
+            forward
+        );
+
+
+        /*
+           Caminhada horizontal.
+
+           Olhar para cima ou para baixo
+           não faz o usuário voar.
+        */
+
+        forward.y =
+            0;
+
+
+        forward.normalize();
+
+
+
+        const right =
+
+            new THREE.Vector3()
+
+            .crossVectors(
+
+                forward,
+
+                camera.up
+
+            )
+
+            .normalize();
+
+
+
+        camera.position
+            .addScaledVector(
+
+                forward,
+
+                -y *
+                distance
+
+            );
+
+
+        camera.position
+            .addScaledVector(
+
+                right,
+
+                x *
+                distance
+
+            );
+
+
+
+        if(
+            mobileUp
+        )
+
+            camera.position.y +=
+                distance;
+
+
+        if(
+            mobileDown
+        )
+
+            camera.position.y -=
+                distance;
+
+    }
 
 }
+
 
 
 /* =========================================================
@@ -884,38 +2205,59 @@ function updateWalk(delta) {
 
 function animate() {
 
+
     requestAnimationFrame(
         animate
     );
 
 
     const delta =
+
         Math.min(
+
             clock.getDelta(),
+
             0.05
+
         );
 
 
-    if(mode === 'orbit') {
+
+    if(
+        mode === 'orbit'
+    ) {
+
 
         orbit.update();
-
-    } else {
-
-        updateWalk(delta);
 
     }
 
 
+    else {
+
+
+        updateWalk(
+            delta
+        );
+
+    }
+
+
+
     renderer.render(
+
         scene,
+
         camera
+
     );
 
 }
 
 
+
 animate();
+
 
 
 /* =========================================================
@@ -923,25 +2265,38 @@ animate();
 ========================================================= */
 
 window.addEventListener(
+
     'resize',
+
     () => {
 
+
         camera.aspect =
+
             window.innerWidth /
+
             window.innerHeight;
 
-        camera.updateProjectionMatrix();
+
+        camera
+            .updateProjectionMatrix();
 
 
         renderer.setSize(
+
             window.innerWidth,
+
             window.innerHeight
+
         );
 
     }
+
 );
 
+
 </script>
+
 
 </body>
 </html>
