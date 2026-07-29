@@ -203,17 +203,15 @@
 
 </div>
 
-
 <div id="loading">
     Carregando projeto 3D...
     <div id="progress">0%</div>
 </div>
 
-
 <div id="walkHelp">
-    W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar &nbsp; • &nbsp; ESC = sair
+    W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar
+    &nbsp; • &nbsp; E/Q = subir/descer &nbsp; • &nbsp; ESC = sair
 </div>
-
 
 <div id="crosshair"></div>
 
@@ -254,7 +252,7 @@ scene.background = new THREE.Color(0xeeeeee);
 /* =========================================================
    CÂMERA
 
-   65 = FOV grande-angular
+   65° = perspectiva grande-angular
 ========================================================= */
 
 const camera = new THREE.PerspectiveCamera(
@@ -321,7 +319,7 @@ scene.add(sun);
 
 
 /* =========================================================
-   CONTROLE ORBITAL
+   CONTROLE DA VISTA GERAL
 ========================================================= */
 
 const orbit =
@@ -334,15 +332,35 @@ orbit.enableDamping = true;
 
 orbit.dampingFactor = 0.07;
 
-/* permite chegar muito perto */
 
-orbit.minDistance = 0.1;
+/*
+   VELOCIDADE DO ZOOM
 
-orbit.maxDistance = 10000;
+   O valor padrão é 1.
+   Coloquei 0.25 para deixar o zoom
+   aproximadamente 4 vezes mais lento.
+*/
 
-/* botão direito permite deslocar o alvo */
+orbit.zoomSpeed = 0.25;
+
+
+/*
+   MOVIMENTAÇÃO LATERAL
+*/
 
 orbit.enablePan = true;
+
+orbit.panSpeed = 0.7;
+
+
+/*
+   Esses valores serão recalculados
+   automaticamente depois que o modelo carregar.
+*/
+
+orbit.minDistance = 1;
+
+orbit.maxDistance = 10000;
 
 
 /* =========================================================
@@ -356,7 +374,6 @@ const walk =
     );
 
 walk.pointerSpeed = 0.8;
-
 
 let mode = 'orbit';
 
@@ -409,7 +426,6 @@ document.addEventListener(
                 keys.down = true;
                 break;
         }
-
     }
 );
 
@@ -448,13 +464,12 @@ document.addEventListener(
                 keys.down = false;
                 break;
         }
-
     }
 );
 
 
 /* =========================================================
-   CARREGAMENTO DO GLB
+   MODELO
 ========================================================= */
 
 const loader = new GLTFLoader();
@@ -467,9 +482,21 @@ let modelCenter =
 let modelSize = 1;
 
 
+/* =========================================================
+   CARREGAMENTO DO GLB
+========================================================= */
+
 loader.load(
 
-    'modelo.glb?v=10',
+    /*
+       Se você substituir o modelo no GitHub,
+       altere v=11 para v=12, v=13 etc.
+       Isso evita que o navegador carregue
+       uma versão antiga do GLB.
+    */
+
+    'modelo.glb?v=11',
+
 
     function(gltf) {
 
@@ -478,9 +505,9 @@ loader.load(
         scene.add(model);
 
 
-        /* ---------------------------------------------
-           calcula tamanho real do projeto
-        --------------------------------------------- */
+        /* =================================================
+           CALCULA TAMANHO DO PROJETO
+        ================================================= */
 
         const box =
             new THREE.Box3()
@@ -503,9 +530,27 @@ loader.load(
             );
 
 
-        /* ---------------------------------------------
-           câmera inicial
-        --------------------------------------------- */
+        /* =================================================
+           LIMITES DE ZOOM
+
+           8% do tamanho geral do projeto =
+           aproxima bastante, mas evita aquele
+           zoom exagerado.
+
+           Se depois você quiser limitar ainda mais,
+           podemos aumentar 0.08 para 0.10 ou 0.12.
+        ================================================= */
+
+        orbit.minDistance =
+            modelSize * 0.08;
+
+        orbit.maxDistance =
+            modelSize * 5;
+
+
+        /* =================================================
+           POSIÇÃO INICIAL DA CÂMERA
+        ================================================= */
 
         camera.position.set(
 
@@ -535,6 +580,10 @@ loader.load(
     },
 
 
+    /* =====================================================
+       PROGRESSO
+    ===================================================== */
+
     function(xhr) {
 
         if(xhr.total) {
@@ -551,9 +600,12 @@ loader.load(
                 .innerText =
                 percentage + '%';
         }
-
     },
 
+
+    /* =====================================================
+       ERRO
+    ===================================================== */
 
     function(error) {
 
@@ -653,6 +705,9 @@ walkBtn.addEventListener(
             .classList
             .remove('active');
 
+        walkHelp.innerHTML =
+            'W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar &nbsp; • &nbsp; E/Q = subir/descer &nbsp; • &nbsp; ESC = sair';
+
         walkHelp.style.display =
             'block';
 
@@ -663,7 +718,9 @@ walkBtn.addEventListener(
 );
 
 
-/* quando aperta ESC */
+/* =========================================================
+   ESC
+========================================================= */
 
 walk.addEventListener(
     'unlock',
@@ -672,7 +729,7 @@ walk.addEventListener(
         if(mode === 'walk') {
 
             walkHelp.innerHTML =
-                'Clique em CAMINHAR para continuar • W A S D = movimentar';
+                'Clique novamente em CAMINHAR para continuar';
 
             crosshair.style.display =
                 'none';
@@ -766,7 +823,7 @@ document
 
 
 /* =========================================================
-   MOVIMENTAÇÃO
+   MOVIMENTAÇÃO NO MODO CAMINHAR
 ========================================================= */
 
 const clock =
@@ -782,8 +839,8 @@ function updateWalk(delta) {
 
 
     /*
-       velocidade proporcional ao
-       tamanho do projeto
+       Velocidade de caminhada proporcional
+       ao tamanho do projeto.
     */
 
     const speed =
@@ -808,8 +865,8 @@ function updateWalk(delta) {
 
 
     /*
-       Q/E permitem subir e descer.
-       Muito útil para arquitetura.
+       E = subir
+       Q = descer
     */
 
     if(keys.up)
