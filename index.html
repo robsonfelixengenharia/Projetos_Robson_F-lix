@@ -1,154 +1,890 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Félix Engenharia | Visualização 3D</title>
+<title>Félix Engenharia | Projeto 3D</title>
 
-  <script type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
-  </script>
-
-  <style>
+<style>
     * {
-      box-sizing: border-box;
+        box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
-      background: #eeeeee;
-      font-family: Arial, Helvetica, sans-serif;
-      overflow: hidden;
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #e8e8e8;
     }
 
-    header {
-      height: 80px;
-      background: #181818;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 30px;
+    #viewer {
+        position: absolute;
+        inset: 0;
     }
 
-    .empresa {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
+    canvas {
+        display: block;
     }
 
-    .projeto {
-      font-size: 14px;
-      color: #cccccc;
+    #topbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 22px;
+
+        background: rgba(18,18,18,0.92);
+        color: white;
+
+        z-index: 10;
     }
 
-    model-viewer {
-      width: 100%;
-      height: calc(100vh - 80px);
-      background-color: #eeeeee;
+    #empresa {
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 1px;
     }
 
-    .instrucoes {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-
-      background: rgba(20,20,20,0.82);
-      color: white;
-
-      padding: 10px 18px;
-      border-radius: 20px;
-
-      font-size: 13px;
-      text-align: center;
-      white-space: nowrap;
+    #buttons {
+        display: flex;
+        gap: 8px;
     }
 
-    @media (max-width: 600px) {
+    button {
+        border: 0;
+        border-radius: 20px;
+        padding: 10px 16px;
 
-      header {
-        height: 65px;
-        padding: 0 15px;
-      }
+        background: #333;
+        color: white;
 
-      .empresa {
-        font-size: 16px;
-      }
-
-      .projeto {
-        font-size: 11px;
-      }
-
-      model-viewer {
-        height: calc(100vh - 65px);
-      }
-
-      .instrucoes {
-        font-size: 11px;
-        bottom: 12px;
-      }
+        cursor: pointer;
+        font-weight: bold;
     }
-  </style>
+
+    button:hover {
+        background: #555;
+    }
+
+    button.active {
+        background: #16853c;
+    }
+
+    #loading {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+
+        transform: translate(-50%, -50%);
+
+        background: rgba(20,20,20,0.90);
+        color: white;
+
+        padding: 18px 28px;
+        border-radius: 14px;
+
+        z-index: 20;
+
+        text-align: center;
+    }
+
+    #progress {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #ccc;
+    }
+
+    #walkHelp {
+        position: absolute;
+
+        left: 50%;
+        bottom: 25px;
+
+        transform: translateX(-50%);
+
+        background: rgba(20,20,20,0.85);
+        color: white;
+
+        padding: 12px 20px;
+        border-radius: 22px;
+
+        font-size: 13px;
+
+        z-index: 10;
+
+        display: none;
+    }
+
+    #crosshair {
+        position: absolute;
+
+        left: 50%;
+        top: 50%;
+
+        width: 8px;
+        height: 8px;
+
+        transform: translate(-50%, -50%);
+
+        border: 2px solid white;
+        border-radius: 50%;
+
+        z-index: 10;
+
+        display: none;
+
+        pointer-events: none;
+    }
+
+    @media (max-width: 700px) {
+
+        #empresa {
+            font-size: 14px;
+        }
+
+        #topbar {
+            height: 58px;
+            padding: 0 10px;
+        }
+
+        button {
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+
+        #walkHelp {
+            font-size: 11px;
+            bottom: 15px;
+            white-space: nowrap;
+        }
+    }
+</style>
+
 </head>
 
 <body>
 
-<header>
+<div id="viewer"></div>
 
-  <div class="empresa">
-    FÉLIX ENGENHARIA
-  </div>
+<div id="topbar">
 
-  <div class="projeto">
-    PROJETO RONI
-  </div>
+    <div id="empresa">
+        FÉLIX ENGENHARIA
+    </div>
 
-</header>
+    <div id="buttons">
 
+        <button id="orbitBtn" class="active">
+            🏠 Vista geral
+        </button>
 
-<model-viewer
+        <button id="walkBtn">
+            🚶 Caminhar
+        </button>
 
-  src="modelo.glb"
+        <button id="homeBtn">
+            ↺ Início
+        </button>
 
-  alt="Modelo 3D do projeto"
+        <button id="fullscreenBtn">
+            ⛶ Tela cheia
+        </button>
 
-  camera-controls
+    </div>
 
-  touch-action="pan-y"
-
-  shadow-intensity="1"
-
-  shadow-softness="0.8"
-
-  exposure="1"
-
-  environment-image="neutral"
-
-  auto-rotate
-
-  rotation-per-second="5deg"
-
-  camera-orbit="45deg 50deg 105%"
-
-  min-camera-orbit="auto 5deg 5%"
-
-  max-camera-orbit="auto 90deg 300%">
-  
-  field-of-view="80deg"
-
-  min-field-of-view="65deg"
-
-  max-field-of-view="95deg">
-  
-</model-viewer>
-
-
-<div class="instrucoes">
-  Arraste para girar • Scroll para aproximar • Use dois dedos no celular
 </div>
 
+
+<div id="loading">
+    Carregando projeto 3D...
+    <div id="progress">0%</div>
+</div>
+
+
+<div id="walkHelp">
+    W A S D = caminhar &nbsp; • &nbsp; Mouse = olhar &nbsp; • &nbsp; ESC = sair
+</div>
+
+
+<div id="crosshair"></div>
+
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+}
+</script>
+
+
+<script type="module">
+
+import * as THREE from 'three';
+
+import { OrbitControls }
+from 'three/addons/controls/OrbitControls.js';
+
+import { PointerLockControls }
+from 'three/addons/controls/PointerLockControls.js';
+
+import { GLTFLoader }
+from 'three/addons/loaders/GLTFLoader.js';
+
+
+/* =========================================================
+   CENA
+========================================================= */
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0xeeeeee);
+
+
+/* =========================================================
+   CÂMERA
+
+   65 = FOV grande-angular
+========================================================= */
+
+const camera = new THREE.PerspectiveCamera(
+    65,
+    window.innerWidth / window.innerHeight,
+    0.05,
+    10000
+);
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+renderer.shadowMap.enabled = true;
+
+document
+    .getElementById('viewer')
+    .appendChild(renderer.domElement);
+
+
+/* =========================================================
+   ILUMINAÇÃO
+========================================================= */
+
+const ambientLight =
+    new THREE.HemisphereLight(
+        0xffffff,
+        0x777777,
+        2.5
+    );
+
+scene.add(ambientLight);
+
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        3
+    );
+
+sun.position.set(
+    50,
+    100,
+    50
+);
+
+scene.add(sun);
+
+
+/* =========================================================
+   CONTROLE ORBITAL
+========================================================= */
+
+const orbit =
+    new OrbitControls(
+        camera,
+        renderer.domElement
+    );
+
+orbit.enableDamping = true;
+
+orbit.dampingFactor = 0.07;
+
+/* permite chegar muito perto */
+
+orbit.minDistance = 0.1;
+
+orbit.maxDistance = 10000;
+
+/* botão direito permite deslocar o alvo */
+
+orbit.enablePan = true;
+
+
+/* =========================================================
+   MODO CAMINHAR
+========================================================= */
+
+const walk =
+    new PointerLockControls(
+        camera,
+        renderer.domElement
+    );
+
+walk.pointerSpeed = 0.8;
+
+
+let mode = 'orbit';
+
+
+/* =========================================================
+   TECLADO
+========================================================= */
+
+const keys = {
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
+    up: false,
+    down: false
+};
+
+
+document.addEventListener(
+    'keydown',
+    (event) => {
+
+        switch(event.code) {
+
+            case 'KeyW':
+            case 'ArrowUp':
+                keys.forward = true;
+                break;
+
+            case 'KeyS':
+            case 'ArrowDown':
+                keys.backward = true;
+                break;
+
+            case 'KeyA':
+            case 'ArrowLeft':
+                keys.left = true;
+                break;
+
+            case 'KeyD':
+            case 'ArrowRight':
+                keys.right = true;
+                break;
+
+            case 'KeyE':
+                keys.up = true;
+                break;
+
+            case 'KeyQ':
+                keys.down = true;
+                break;
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    'keyup',
+    (event) => {
+
+        switch(event.code) {
+
+            case 'KeyW':
+            case 'ArrowUp':
+                keys.forward = false;
+                break;
+
+            case 'KeyS':
+            case 'ArrowDown':
+                keys.backward = false;
+                break;
+
+            case 'KeyA':
+            case 'ArrowLeft':
+                keys.left = false;
+                break;
+
+            case 'KeyD':
+            case 'ArrowRight':
+                keys.right = false;
+                break;
+
+            case 'KeyE':
+                keys.up = false;
+                break;
+
+            case 'KeyQ':
+                keys.down = false;
+                break;
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CARREGAMENTO DO GLB
+========================================================= */
+
+const loader = new GLTFLoader();
+
+let model;
+
+let modelCenter =
+    new THREE.Vector3();
+
+let modelSize = 1;
+
+
+loader.load(
+
+    'modelo.glb?v=10',
+
+    function(gltf) {
+
+        model = gltf.scene;
+
+        scene.add(model);
+
+
+        /* ---------------------------------------------
+           calcula tamanho real do projeto
+        --------------------------------------------- */
+
+        const box =
+            new THREE.Box3()
+            .setFromObject(model);
+
+        const size =
+            box.getSize(
+                new THREE.Vector3()
+            );
+
+        box.getCenter(
+            modelCenter
+        );
+
+        modelSize =
+            Math.max(
+                size.x,
+                size.y,
+                size.z
+            );
+
+
+        /* ---------------------------------------------
+           câmera inicial
+        --------------------------------------------- */
+
+        camera.position.set(
+
+            modelCenter.x +
+            modelSize * 0.75,
+
+            modelCenter.y +
+            modelSize * 0.45,
+
+            modelCenter.z +
+            modelSize * 0.75
+
+        );
+
+
+        orbit.target.copy(
+            modelCenter
+        );
+
+        orbit.update();
+
+
+        document
+            .getElementById('loading')
+            .style.display = 'none';
+
+    },
+
+
+    function(xhr) {
+
+        if(xhr.total) {
+
+            const percentage =
+                Math.round(
+                    xhr.loaded /
+                    xhr.total *
+                    100
+                );
+
+            document
+                .getElementById('progress')
+                .innerText =
+                percentage + '%';
+        }
+
+    },
+
+
+    function(error) {
+
+        console.error(error);
+
+        document
+            .getElementById('loading')
+            .innerHTML =
+            'Erro ao carregar o modelo 3D';
+
+    }
+
+);
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+const orbitBtn =
+    document.getElementById(
+        'orbitBtn'
+    );
+
+const walkBtn =
+    document.getElementById(
+        'walkBtn'
+    );
+
+const homeBtn =
+    document.getElementById(
+        'homeBtn'
+    );
+
+const walkHelp =
+    document.getElementById(
+        'walkHelp'
+    );
+
+const crosshair =
+    document.getElementById(
+        'crosshair'
+    );
+
+
+/* =========================================================
+   VISTA GERAL
+========================================================= */
+
+orbitBtn.addEventListener(
+    'click',
+    () => {
+
+        mode = 'orbit';
+
+        walk.unlock();
+
+        orbit.enabled = true;
+
+        orbitBtn
+            .classList
+            .add('active');
+
+        walkBtn
+            .classList
+            .remove('active');
+
+        walkHelp.style.display =
+            'none';
+
+        crosshair.style.display =
+            'none';
+
+    }
+);
+
+
+/* =========================================================
+   CAMINHAR
+========================================================= */
+
+walkBtn.addEventListener(
+    'click',
+    () => {
+
+        mode = 'walk';
+
+        orbit.enabled = false;
+
+        walk.lock();
+
+        walkBtn
+            .classList
+            .add('active');
+
+        orbitBtn
+            .classList
+            .remove('active');
+
+        walkHelp.style.display =
+            'block';
+
+        crosshair.style.display =
+            'block';
+
+    }
+);
+
+
+/* quando aperta ESC */
+
+walk.addEventListener(
+    'unlock',
+    () => {
+
+        if(mode === 'walk') {
+
+            walkHelp.innerHTML =
+                'Clique em CAMINHAR para continuar • W A S D = movimentar';
+
+            crosshair.style.display =
+                'none';
+        }
+
+    }
+);
+
+
+/* =========================================================
+   VOLTAR À VISTA INICIAL
+========================================================= */
+
+homeBtn.addEventListener(
+    'click',
+    () => {
+
+        mode = 'orbit';
+
+        walk.unlock();
+
+        orbit.enabled = true;
+
+
+        camera.position.set(
+
+            modelCenter.x +
+            modelSize * 0.75,
+
+            modelCenter.y +
+            modelSize * 0.45,
+
+            modelCenter.z +
+            modelSize * 0.75
+
+        );
+
+
+        orbit.target.copy(
+            modelCenter
+        );
+
+        orbit.update();
+
+
+        orbitBtn
+            .classList
+            .add('active');
+
+        walkBtn
+            .classList
+            .remove('active');
+
+        walkHelp.style.display =
+            'none';
+
+        crosshair.style.display =
+            'none';
+
+    }
+);
+
+
+/* =========================================================
+   TELA CHEIA
+========================================================= */
+
+document
+    .getElementById('fullscreenBtn')
+    .addEventListener(
+        'click',
+        () => {
+
+            if(
+                !document.fullscreenElement
+            ) {
+
+                document
+                    .documentElement
+                    .requestFullscreen();
+
+            } else {
+
+                document
+                    .exitFullscreen();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   MOVIMENTAÇÃO
+========================================================= */
+
+const clock =
+    new THREE.Clock();
+
+
+function updateWalk(delta) {
+
+    if(
+        mode !== 'walk' ||
+        !walk.isLocked
+    ) return;
+
+
+    /*
+       velocidade proporcional ao
+       tamanho do projeto
+    */
+
+    const speed =
+        modelSize * 0.10;
+
+
+    const distance =
+        speed * delta;
+
+
+    if(keys.forward)
+        walk.moveForward(distance);
+
+    if(keys.backward)
+        walk.moveForward(-distance);
+
+    if(keys.right)
+        walk.moveRight(distance);
+
+    if(keys.left)
+        walk.moveRight(-distance);
+
+
+    /*
+       Q/E permitem subir e descer.
+       Muito útil para arquitetura.
+    */
+
+    if(keys.up)
+        camera.position.y += distance;
+
+    if(keys.down)
+        camera.position.y -= distance;
+
+}
+
+
+/* =========================================================
+   LOOP
+========================================================= */
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    const delta =
+        Math.min(
+            clock.getDelta(),
+            0.05
+        );
+
+
+    if(mode === 'orbit') {
+
+        orbit.update();
+
+    } else {
+
+        updateWalk(delta);
+
+    }
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+animate();
+
+
+/* =========================================================
+   REDIMENSIONAMENTO
+========================================================= */
+
+window.addEventListener(
+    'resize',
+    () => {
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+    }
+);
+
+</script>
 
 </body>
 </html>
